@@ -1,0 +1,3 @@
+[submodule "third-parties/pjsip"]
+	path = third-parties/pjsip
+	url = https://github.com/i9corp/pjsip.git

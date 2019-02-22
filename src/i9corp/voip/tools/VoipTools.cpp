@@ -31,3 +31,11 @@ char *VoipTools::getPhoneNumberFromUri(const char *value) {
     }
     return strdup(result.c_str());
 }
+
+
+long VoipTools::getLongId(const void *reference) {
+    char mBuffer[32];
+    memset(mBuffer, '/0', 32);
+    snprintf(mBuffer, 32, "%p", reference);
+    return strtol(mBuffer, NULL, 16);
+}

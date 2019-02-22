@@ -11,6 +11,8 @@ namespace i9corp {
     class DLL_EXPORT VoipTools {
     public:
         static char *getPhoneNumberFromUri(const char *value);
+
+        static long getLongId(const void *reference);
     };
 }
 

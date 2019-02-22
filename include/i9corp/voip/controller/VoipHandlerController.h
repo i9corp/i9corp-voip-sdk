@@ -7,30 +7,47 @@
 
 #include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/model/VoipCall.h>
-using  namespace i9corp;
+
+using namespace i9corp;
 
 namespace i9corp {
+    typedef enum eVoipCallDirection {
+        OUTGOING,
+        INCOMING,
+        INTERNAL
+    } TVoipCallDirection;
+
+
     class DLL_EXPORT VoipHandlerController {
     public:
-        bool hangup(VoipCall *call);
+        virtual bool hangup(VoipCall *call) = 0;
 
-        bool reject(VoipCall *call);
+        virtual bool isAutoAnswer() = 0;
 
-        bool transfer(const char *number);
+        virtual bool reject(VoipCall *call) = 0;
 
-        bool dial(const char *number);
+        virtual bool transfer(const char *number) = 0;
 
-        bool dtmf(const char key);
+        virtual bool dial(const char *number) = 0;
 
-        bool answer();
+        virtual bool dtmf(const char key) = 0;
 
-        bool reload();
+        virtual bool answer() = 0;
 
-        bool mute();
+        virtual bool reload() = 0;
 
-        bool hold();
+        virtual bool mute() = 0;
 
-        void onRingStart(VoipCall *call);
+        virtual bool hold() = 0;
+
+        virtual void onError(const char *message) = 0;
+
+        virtual void onNotice(const char *message) = 0;
+
+        virtual void onRingStart(VoipCall *call) = 0;
+
+        virtual void
+        onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
     };
 }
 
