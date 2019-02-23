@@ -6,7 +6,7 @@
 #include <i9corp/voip/tools/VoipTools.h>
 #include <string>
 #include <regex>
-
+#include <string.h>
 using namespace i9corp;
 
 char *VoipTools::getPhoneNumberFromUri(const char *value) {

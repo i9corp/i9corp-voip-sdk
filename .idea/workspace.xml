@@ -4,9 +4,11 @@
     <generated>
       <config projectName="i9corp-voip-sdk" targetName="pjproject" />
       <config projectName="i9corp-voip-sdk" targetName="pjmedia" />
+      <config projectName="i9corp-voip-sdk" targetName="gsm" />
       <config projectName="i9corp-voip-sdk" targetName="pjlib-util" />
-      <config projectName="i9corp-voip-sdk" targetName="pjlib" />
+      <config projectName="i9corp-voip-sdk" targetName="ilbc" />
       <config projectName="i9corp-voip-sdk" targetName="g7221" />
+      <config projectName="i9corp-voip-sdk" targetName="pjlib" />
       <config projectName="i9corp-voip-sdk" targetName="pjnath" />
       <config projectName="i9corp-voip-sdk" targetName="srtp" />
       <config projectName="i9corp-voip-sdk" targetName="pjsip" />
@@ -20,10 +22,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b7de9bb-a868-4fd0-a6c6-2580e3928ef7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,20 +46,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="23" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="148">
+              <caret line="23" column="43" lean-forward="true" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="55" column="58" selection-start-line="55" selection-start-column="54" selection-end-line="55" selection-end-column="58" />
+            <state relative-caret-position="34">
+              <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -65,11 +67,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="37" column="8" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
+            <state relative-caret-position="646">
+              <caret line="38" column="32" selection-start-line="38" selection-start-column="32" selection-end-line="38" selection-end-column="32" />
               <folding>
                 <element signature="e#44#85#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/third-parties/pjsip/pjmedia/src/pjmedia/wsola.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="12206">
+              <caret line="718" column="24" selection-start-line="718" selection-start-column="24" selection-end-line="718" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -91,6 +102,7 @@
       <find>ringing</find>
       <find>LIB</find>
       <find>ILBC</find>
+      <find>ssl</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\sobrito\CLionProjects\untitled\src</dir>
@@ -99,7 +111,7 @@
     </dirStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/third-parties/pjsip" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -119,10 +131,10 @@
         <option value="$PROJECT_DIR$/include/i9corp/voip/model/VoipLine.h" />
         <option value="$PROJECT_DIR$/include/i9corp/voip/controller/VoipHandlerController.h" />
         <option value="$PROJECT_DIR$/src/i9corp/voip/model/VoipCall.cpp" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
       </list>
     </option>
   </component>
@@ -139,6 +151,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -154,58 +167,20 @@
             <path>
               <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
               <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="cmake-build-debug" type="462c0819:PsiDirectoryNode" />
-              <item name="third-parties" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="i9corp" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="i9corp" type="462c0819:PsiDirectoryNode" />
-              <item name="voip" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="i9corp" type="462c0819:PsiDirectoryNode" />
-              <item name="voip" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="third-parties" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="i9corp-voip-sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="untitled" type="462c0819:PsiDirectoryNode" />
-              <item name="third-parties" type="462c0819:PsiDirectoryNode" />
-              <item name="pjsip" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="last_opened_file_path" value="D:/Source/openssl" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -234,7 +209,17 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="gsm" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="i9corp-voip-sdk" TARGET_NAME="gsm" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="i9corp-voip-sdk" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="i9corp-voip-sdk" TARGET_NAME="i9corp-voip-sdk" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ilbc" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="i9corp-voip-sdk" TARGET_NAME="ilbc" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -283,6 +268,8 @@
       <item itemvalue="Application.pjnath" />
       <item itemvalue="Application.pjsip" />
       <item itemvalue="Application.g7221" />
+      <item itemvalue="Application.gsm" />
+      <item itemvalue="Application.ilbc" />
       <item itemvalue="Application.srtp" />
     </list>
   </component>
@@ -296,18 +283,21 @@
       <workItem from="1550842940122" duration="629000" />
       <workItem from="1550852459509" duration="19206000" />
       <workItem from="1550922479577" duration="21845000" />
-      <workItem from="1550953708907" duration="2697000" />
+      <workItem from="1550953708907" duration="4494000" />
+      <workItem from="1550960161874" duration="1396000" />
+      <workItem from="1550961760871" duration="499000" />
+      <workItem from="1550962333516" duration="471000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44377000" />
+    <option name="totallyTimeSpent" value="48540000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25799572" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26599148" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -320,10 +310,10 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="File Transfer" order="8" weight="0.32900432" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.32900432" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32900432" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="CMake" order="12" weight="0.32900432" />
-      <window_info anchor="bottom" id="Messages" order="13" weight="0.32900432" />
+      <window_info active="true" anchor="bottom" id="Messages" order="13" visible="true" weight="0.5584416" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -437,13 +427,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="6" lean-forward="true" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/i9corp/voip/model/VoipLine.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1584">
@@ -491,6 +474,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="38" column="24" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/include/i9corp/voip/controller/VoipHandlerController.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -500,28 +493,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/i9corp/voip/tools/VoipTools.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="37" column="8" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
+        <state relative-caret-position="646">
+          <caret line="38" column="32" selection-start-line="38" selection-start-column="32" selection-end-line="38" selection-end-column="32" />
           <folding>
             <element signature="e#44#85#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+    <entry file="file://$PROJECT_DIR$/third-parties/pjsip/pjmedia/src/pjmedia/wsola.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
+        <state relative-caret-position="12206">
+          <caret line="718" column="24" selection-start-line="718" selection-start-column="24" selection-end-line="718" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/third-parties/pjsip/CMakeLists.txt">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="55" column="58" selection-start-line="55" selection-start-column="54" selection-end-line="55" selection-end-column="58" />
+        <state relative-caret-position="34">
+          <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="23" column="43" lean-forward="true" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
         </state>
       </provider>
     </entry>
