@@ -6,48 +6,75 @@
 #define I9CORP_VOIP_SDK_VOIP_HANDLER_CONTROLLER_H
 
 #include <i9corp/voip/common/CommonExport.h>
-#include <i9corp/voip/model/VoipCall.h>
-
-using namespace i9corp;
 
 namespace i9corp {
     typedef enum eVoipCallDirection {
         OUTGOING,
         INCOMING,
-        INTERNAL
+        INTERNAL,
+        EXTERNAL
     } TVoipCallDirection;
 
+    typedef enum eVoipLineStatus {
+        REGISTERED,
+        UNREGISTERED,
+        REGISTERING,
+        UNREGISTERING
+    } TVoipLineStatus;
+
+    typedef enum eVoipCallStatus {
+        HANGUP,
+        TRANSFERRING,
+        DIALING,
+        RECEIVING,
+        ANSWERED,
+        RINGING,
+        REJECT
+    } TVoipCallStatus;
 
     class DLL_EXPORT VoipHandlerController {
     public:
-        virtual bool hangup(VoipCall *call) = 0;
+        VoipHandlerController();
 
+        ~VoipHandlerController();
+
+        // System
         virtual bool isAutoAnswer() = 0;
 
-        virtual bool reject(VoipCall *call) = 0;
+        void onError(const char *message, ...);
 
-        virtual bool transfer(const char *number) = 0;
+        void onNotice(const char *message, ...);
 
-        virtual bool dial(const char *number) = 0;
+        virtual const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber) = 0;
 
-        virtual bool dtmf(const char key) = 0;
+        TVoipCallDirection getDirection(const char *number);
 
-        virtual bool answer() = 0;
+        // Call
 
-        virtual bool reload() = 0;
+        virtual bool onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
 
-        virtual bool mute() = 0;
+        virtual bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
 
-        virtual bool hold() = 0;
+        virtual bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
 
-        virtual void onError(const char *message) = 0;
-
-        virtual void onNotice(const char *message) = 0;
-
-        virtual void onRingStart(VoipCall *call) = 0;
 
         virtual void
         onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+
+        virtual void
+        onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+
+        virtual void onAnswer(int line, long callId, const char *phoneNumber) = 0;
+
+        virtual void onChangeRegisterState(int line, TVoipLineStatus status) = 0;
+
+        virtual void onHangup(int line, int callId) = 0;
+
+        virtual void onInMute(int line, int callId, bool value) = 0;
+
+        virtual void onInHold(int line, int callId, bool value) = 0;
+        virtual void onChangeVolume(int line, int volume) = 0;
+
     };
 }
 

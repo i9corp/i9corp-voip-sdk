@@ -9,21 +9,17 @@
 using namespace i9corp;
 
 
-VoipCall::VoipCall(VoipHandlerController *controller, VoipAccount &account, int callId) : pj::Call(account, callId) {
+VoipCall::VoipCall(int line, VoipHandlerController *controller, pj::Account &account, int callId) : pj::Call(account,
+                                                                                                             callId) {
     this->handler = controller;
+    this->inHold = false;
+    this->muted = false;
+    this->playback = nullptr;
+    this->line = line;
 }
 
 
-void VoipCall::mute(bool value) {
-
-}
-
-void VoipCall::hold(bool value) {
-
-}
-
-
-char *VoipCall::getNumber() const {
+const char *VoipCall::getNumber() {
     if (this->number == nullptr) {
         pj::CallInfo ci = getInfo();
         this->number = VoipTools::getPhoneNumberFromUri(ci.remoteUri.c_str());
@@ -31,4 +27,142 @@ char *VoipCall::getNumber() const {
     return number;
 }
 
+bool VoipCall::hold(bool value) {
+    this->inHold = value;
+    pj::CallOpParam prm = new pj::CallOpParam(true);
+    try {
+        if (this->inHold) {
+            this->setHold(prm);
+        } else {
+            prm.opt.flag = 1;
+            this->reinvite(prm);
+        }
+        this->handler->onInHold(this->line, this->getId(), value);
+        return true;
+    } catch (pj::Error &e) {
+        return false;
+    }
+}
+
+bool VoipCall::mute(bool value) {
+    this->muted = value;
+    pj::CallInfo ci = this->getInfo();
+    for (unsigned i = 0; i < ci.media.size(); i++) {
+        if (ci.media[i].type != PJMEDIA_TYPE_AUDIO || !this->getMedia(i)) {
+            continue;
+        }
+        auto aud_med = dynamic_cast<pj::AudioMedia *>(getMedia(i));
+        try {
+            pj::AudDevManager &mgr = pj::Endpoint::instance().audDevManager();
+            if (this->muted) {
+                mgr.getCaptureDevMedia().stopTransmit(*aud_med);
+            } else {
+                mgr.getCaptureDevMedia().startTransmit(*aud_med);
+            }
+            this->handler->onInMute(this->line, this->getId(), value);
+            return true;
+        } catch (pj::Error &e) {
+            this->handler->onError(e.info(false).c_str());
+            return false;
+        }
+    }
+    return false;
+}
+
+bool VoipCall::volume(unsigned short value) {
+    int mValue;
+    mValue = value > 100 ? 100 : value;
+    mValue = mValue < 0 ? 0 : mValue;
+
+    float rValue = mValue * 2 / 100;
+    pjsua_conf_adjust_rx_level(0, rValue);
+
+    this->handler->onChangeVolume(this->line, mValue);
+    return true;
+}
+
+bool VoipCall::isMuted() const {
+    return muted;
+}
+
+bool VoipCall::isInHold() const {
+    return inHold;
+}
+
+bool VoipCall::ringStart() {
+    return this->ringStart(TVoipCallDirection::INCOMING);
+}
+
+bool VoipCall::ringStart(TVoipCallDirection direction) {
+
+    const char *ringtone = handler->getWaveRingtone(direction, this->getNumber());
+    if (ringtone != nullptr) {
+        return false;
+    }
+
+    auto mPlayback = new VoipPlayback(this->handler, ringtone);
+    mPlayback->play();
+    this->setPlayback(mPlayback);
+}
+
+bool VoipCall::ringStop() {
+    this->playback->stop();
+}
+
+void VoipCall::setPlayback(VoipPlayback *playback) {
+    if (this->playback != nullptr) {
+        this->playback->stop();
+        delete this->playback;
+    }
+    VoipCall::playback = playback;
+}
+
+void VoipCall::onCallState(pj::OnCallStateParam &prm) {
+    TVoipCallDirection d;
+    pj::CallInfo ci = getInfo();
+    switch (ci.state) {
+        case PJSIP_INV_STATE_DISCONNECTED:
+            this->ringStop();
+            this->handler->onHangup(this->line, this->getId());
+            break;
+        case PJSIP_INV_STATE_CONNECTING:
+        case PJSIP_INV_STATE_CALLING:
+            this->handler->onOutgoingRinging(this->line, this->getId(), this->getNumber(),
+                                             TVoipCallDirection::OUTGOING);
+            break;
+        case PJSIP_INV_STATE_CONFIRMED:
+            this->ringStop();
+            this->handler->onAnswer(this->line, this->getId(), this->getNumber());
+            break;
+        case PJSIP_INV_STATE_INCOMING:
+            d = this->handler->getDirection(this->getNumber());
+            this->handler->onIncomingRinging(this->line, this->getId(), this->getNumber(), d);
+            break;
+        case PJSIP_INV_STATE_EARLY:
+            if (ci.lastStatusCode != PJSIP_SC_RINGING) {
+                this->ringStop();
+            } else if (ci.role == PJSIP_ROLE_UAC) {
+                this->ringStart(TVoipCallDirection::OUTGOING);
+            } else if (ci.role == PJSIP_ROLE_UAS) {
+                d = this->handler->getDirection(this->getNumber());
+                this->ringStart(d);
+            }
+            break;
+    }
+    Call::onCallState(prm);
+}
+
+void VoipCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
+    pj::CallInfo ci = getInfo();
+    for (unsigned i = 0; i < ci.media.size(); i++) {
+        if (ci.media[i].type != PJMEDIA_TYPE_AUDIO || !getMedia(i)) {
+            continue;
+        }
+        auto aud_med = dynamic_cast<pj::AudioMedia *>(getMedia(i));
+        // Connect the call audio media to sound device
+        pj::AudDevManager &mgr = pj::Endpoint::instance().audDevManager();
+        aud_med->startTransmit(mgr.getPlaybackDevMedia());
+        mgr.getCaptureDevMedia().startTransmit(*aud_med);
+    }
+}
 

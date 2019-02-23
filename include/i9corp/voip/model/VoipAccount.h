@@ -7,37 +7,33 @@
 
 #include <pjsua2.hpp>
 #include <i9corp/voip/controller/VoipHandlerController.h>
+#include <i9corp/voip/controller/VoipRegisterStateController.h>
 #include <i9corp/voip/model/VoipCall.h>
 #include <map>
 #include <string>
 
+using namespace i9corp;
+
 namespace i9corp {
     class VoipAccount : public pj::Account {
     public:
-        VoipAccount(int line, VoipHandlerController *controller);
+        VoipAccount(int line, VoipRegisterStateController *stateController, VoipHandlerController *handlerController);
 
         ~VoipAccount() override;
 
         // Native PJSIP Interface
         void onIncomingCall(pj::OnIncomingCallParam &prm) override;
 
-        void onRegStarted(pj::OnRegStartedParam &prm) override;
-
         void onRegState(pj::OnRegStateParam &prm) override;
 
-        void onIncomingSubscribe(pj::OnIncomingSubscribeParam &prm) override;
+        VoipCall *getCall(long id);
 
-        void onInstantMessage(pj::OnInstantMessageParam &prm) override;
+        void setCall(long id, VoipCall *call);
 
-        void onInstantMessageStatus(pj::OnInstantMessageStatusParam &prm) override;
-
-        void onTypingIndication(pj::OnTypingIndicationParam &prm) override;
-
-        void onMwiInfo(pj::OnMwiInfoParam &prm) override;
-
-        setCall(long id, VoipCall *call);
         void removeCall(long id);
+
     private:
+        VoipRegisterStateController *state;
         VoipHandlerController *handler;
         std::map<long, VoipCall *> calls;
         int line;

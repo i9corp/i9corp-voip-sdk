@@ -8,8 +8,10 @@
 
 using namespace i9corp;
 
-VoipAccount::VoipAccount(int line, VoipHandlerController *controller) {
-    this->handler = controller;
+VoipAccount::VoipAccount(int line, VoipRegisterStateController *stateController,
+                         VoipHandlerController *handlerController) {
+    this->handler = handlerController;
+    this->state = stateController;
 }
 
 VoipAccount::~VoipAccount() {
@@ -18,7 +20,7 @@ VoipAccount::~VoipAccount() {
 
 void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
 
-    VoipCall *call = new VoipCall(this->handler, *this, iprm.callId);
+    VoipCall *call = new VoipCall(this->line, this->handler, *this, iprm.callId);
     pj::CallInfo ci = call->getInfo();
     pj::CallOpParam prm;
 
@@ -40,32 +42,13 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     this->handler->onIncomingRinging(this->line, id, call->getNumber(), TVoipCallDirection::INCOMING);
 }
 
-void VoipAccount::onRegStarted(pj::OnRegStartedParam &prm) {
-    Account::onRegStarted(prm);
-}
 
 void VoipAccount::onRegState(pj::OnRegStateParam &prm) {
-    Account::onRegState(prm);
-}
 
-void VoipAccount::onIncomingSubscribe(pj::OnIncomingSubscribeParam &prm) {
-    Account::onIncomingSubscribe(prm);
-}
+    pj::AccountInfo ai = getInfo();
 
-void VoipAccount::onInstantMessage(pj::OnInstantMessageParam &prm) {
-    Account::onInstantMessage(prm);
-}
-
-void VoipAccount::onInstantMessageStatus(pj::OnInstantMessageStatusParam &prm) {
-    Account::onInstantMessageStatus(prm);
-}
-
-void VoipAccount::onTypingIndication(pj::OnTypingIndicationParam &prm) {
-    Account::onTypingIndication(prm);
-}
-
-void VoipAccount::onMwiInfo(pj::OnMwiInfoParam &prm) {
-    Account::onMwiInfo(prm);
+    TVoipLineStatus s = ai.regIsActive ? TVoipLineStatus::REGISTERED : TVoipLineStatus::UNREGISTERED;
+    this->state->onChangeRegisterState(s);
 }
 
 const std::map<long, VoipCall *> &VoipAccount::getCalls() const {
@@ -88,4 +71,12 @@ void VoipAccount::setCall(long id, VoipCall *call) {
         return;
     }
     this->calls.insert(std::pair<long, VoipCall *>(id, call));
+}
+
+VoipCall *VoipAccount::getCall(long id) {
+    auto it = this->calls.find(id);
+    if (it != this->calls.end()) {
+        return nullptr;
+    }
+    return it->second;
 }

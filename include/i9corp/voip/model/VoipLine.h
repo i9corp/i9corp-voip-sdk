@@ -7,22 +7,17 @@
 
 #include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
+#include <i9corp/voip/controller/VoipRegisterStateController.h>
 #include <i9corp/voip/model/VoipCall.h>
 #include <i9corp/voip/model/VoipAccount.h>
 #include <pjsua2.hpp>
 
 namespace i9corp {
 
-    typedef enum eVoipLineStatus {
-        REGISTERED,
-        UNREGISTERED,
-        REGISTERING,
-        UNREGISTERING
-    } TVoipLineStatus;
 
-    class DLL_EXPORT  VoipLine {
+    class DLL_EXPORT  VoipLine : public VoipRegisterStateController {
     public:
-        VoipLine(int number, VoipHandlerController *controller,);
+        VoipLine(int number, VoipHandlerController *controller);
 
         VoipLine(int number, VoipHandlerController *controller, const char *username, const char *password,
                  const char *hostname, unsigned short port);
@@ -33,51 +28,78 @@ namespace i9corp {
 
         bool deactivate();
 
-        bool reject(VoipCall *call);
+        // Call
+        VoipCall *getCurrentCall();
 
-        bool hangup(VoipCall *call);
+        char *toSipNumber(const char *number);
 
-    private:
-        void initialize();
+        bool dtmf(long callId, char digits);
 
-        char *username;
+        bool dtmf(long callId, const char *digits);
+
+        bool transfer(const char *number);
+
+        bool transfer(long callId, const char *digits);
+
+        bool dial(const char *digits);
+
+        bool reject(long callId);
+
+        bool volume(long callId, unsigned short value);
+
+        bool hangup();
+
+        bool hangup(long callId);
+
+        bool answer();
+
+        bool answer(long callId);
+
+        bool mute(bool value);
+
+        bool mute(long callId, bool value);
+
+        bool hold(bool value);
+
+        bool hold(long callId, bool value);
+
     public:
-        void dial(const char *text);
-
         char *getUsername() const;
 
-        void setUsername(char *username);
+        void setUsername(const char *username);
 
         char *getPassword() const;
 
-        void setPassword(char *password);
+        void setPassword(const char *password);
 
         char *getHostname() const;
 
-        void setHostname(char *hostname);
+        void setHostname(const char *hostname);
 
         unsigned short getPort() const;
 
         void setPort(unsigned short port);
 
-        VoipHandlerController *getHandler() const;
+        long getId();
 
-        void setHandler(VoipHandlerController *handler);
 
-        VoipCall *getCurrentCall();
-
-    public:
-        long getId() const;
-
-    private:
-        int number;
-    public:
         int getNumber() const;
 
         void setNumber(int number);
 
+        void setStunServer(const char *stunServer);
+
+        void setStatus(TVoipLineStatus value);
+
+        void onChangeRegisterState(TVoipLineStatus status) override;
+
+
     private:
+        void initialize();
+
         long id;
+        int number;
+        char *username;
         char *password;
         char *hostname;
         unsigned short port;
@@ -88,17 +110,11 @@ namespace i9corp {
         VoipAccount *account;
         TVoipLineStatus status;
 
-    public:
-        void setStunServer(char *stunServer);
+        void setRegUri(const char *regUri);
 
-    private:
+        void setIdUri(const char *idUri);
+
         char *regUri;
-    public:
-        void setRegUri(char *regUri);
-
-        void setIdUri(char *idUri);
-
-    private:
         char *idUri;
 
         // PJSIP
