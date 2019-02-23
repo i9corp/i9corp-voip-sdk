@@ -35,7 +35,7 @@ char *VoipTools::getPhoneNumberFromUri(const char *value) {
 
 long VoipTools::getLongId(const void *reference) {
     char mBuffer[32];
-    memset(mBuffer, '/0', 32);
+    memset(mBuffer, '\0', 32);
     snprintf(mBuffer, 32, "%p", reference);
     return strtol(mBuffer, NULL, 16);
 }
