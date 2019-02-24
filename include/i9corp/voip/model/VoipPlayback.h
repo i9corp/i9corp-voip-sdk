@@ -5,12 +5,13 @@
 #ifndef I9CORP_VOIP_SDK_VOIPPLAYBACK_H
 #define I9CORP_VOIP_SDK_VOIPPLAYBACK_H
 
+#include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
 #include <pjsua2.hpp>
 #include <thread>
 
 namespace i9corp {
-    class VoipPlayback {
+    class DLL_EXPORT VoipPlayback {
     public:
         VoipPlayback(VoipHandlerController *handler, const char *filename, unsigned int duration, int deviceId);
 

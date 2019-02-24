@@ -2,6 +2,7 @@
 // Created by sobrito on 23/02/2019.
 //
 
+#include "../common/CommonBuildLibrary.h"
 #include <i9corp/voip/model/VoipPlayback.h>
 #include <string.h>
 #include <stdlib.h>

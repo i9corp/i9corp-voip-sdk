@@ -6,9 +6,10 @@
 #define I9CORP_VOIP_SDK_VOIP_REGISTER_STATE_CONTROLLER_H
 
 #include <i9corp/voip/controller/VoipHandlerController.h>
+#include <i9corp/voip/common/CommonExport.h>
 
 namespace i9corp {
-    class VoipRegisterStateController {
+    class DLL_EXPORT VoipRegisterStateController {
     public:
         virtual void onChangeRegisterState(TVoipLineStatus status) = 0;
     };

@@ -20,12 +20,10 @@ set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjsip/include)
 set(LIBRARY_DIR ${LIBRARY_DIR} ./lib )
 set(LIBRARY_DIR ${LIBRARY_DIR} ./third-parties/pjsip/lib)
 
-
-
 if ((${CMAKE_SYSTEM_NAME} MATCHES "(Windows)"))
 
     set(MINGW_BASE_DIR  "C:/MinGW")
-    set(MINGW_BASE_ARCH_DIR  "C:/MinGW/x86_64-w64-mingw32")
+    set(MINGW_BASE_ARCH_DIR  "${MINGW_BASE_DIR}/x86_64-w64-mingw32")
 
     if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/include)
         set(INCLUDE_DIR ${INCLUDE_DIR} ${MINGW_BASE_ARCH_DIR}/include)
@@ -66,29 +64,8 @@ if ((${CMAKE_SYSTEM_NAME} MATCHES "(Windows)"))
     set(EXTRA_LIB ${EXTRA_LIB} ws2_32)
 endif ()
 
-
 include_directories(${INCLUDE_DIR})
 link_directories(${LIBRARY_DIR})
-
-
-
-find_library(CRYTPO_LIBRARY crypto PATHS ${LIBRARY_DIR})
-if(NOT CRYTPO_LIBRARY)
-    message(FATAL_ERROR "crypto library not found")
-endif()
-set(EXTRA_LIB ${EXTRA_LIB} crypto)
-
-find_library(SSL_LIBRARY ssl PATHS ${LIBRARY_DIR})
-if(NOT SSL_LIBRARY)
-    message(FATAL_ERROR "openssl library not found")
-endif()
-set(EXTRA_LIB ${EXTRA_LIB} ssl)
-
-find_library(PTHREAD_LIBRARY pthread PATHS ${LIBRARY_DIR})
-if(NOT PTHREAD_LIBRARY)
-    message(FATAL_ERROR "pthread library not found")
-endif()
-set(EXTRA_LIB ${EXTRA_LIB} pthread)
 
 ################################################################################
 # Print summary
@@ -100,7 +77,8 @@ message("LIBRARY_DIR:     ${LIBRARY_DIR}")
 message("EXTRA_LIB:       ${EXTRA_LIB}")
 
 add_subdirectory(./third-parties/pjsip)
-add_library(i9corp-voip-sdk SHARED include/i9corp/voip/common/CommonExport.h src/i9corp/voip/common/CommonBuildLibrary.h src/i9corp/voip/model/VoipLine.cpp include/i9corp/voip/model/VoipLine.h include/i9corp/voip/controller/VoipHandlerController.h src/i9corp/voip/model/VoipCall.cpp include/i9corp/voip/model/VoipCall.h src/i9corp/voip/tools/VoipTools.cpp include/i9corp/voip/tools/VoipTools.h src/i9corp/voip/model/VoipAccount.cpp include/i9corp/voip/model/VoipAccount.h src/i9corp/voip/model/VoipPlayback.cpp include/i9corp/voip/model/VoipPlayback.h src/i9corp/voip/controller/VoipHandlerController.cpp include/i9corp/voip/controller/VoipRegisterStateController.h
-        )
-target_link_libraries(i9corp-voip-sdk pjproject wsock32 ws2_32 crypto ssl pthread )
+add_library(i9corp-voip-sdk STATIC include/i9corp/voip/common/CommonExport.h src/i9corp/voip/common/CommonBuildLibrary.h src/i9corp/voip/model/VoipLine.cpp include/i9corp/voip/model/VoipLine.h include/i9corp/voip/controller/VoipHandlerController.h src/i9corp/voip/model/VoipCall.cpp include/i9corp/voip/model/VoipCall.h src/i9corp/voip/tools/VoipTools.cpp include/i9corp/voip/tools/VoipTools.h src/i9corp/voip/model/VoipAccount.cpp include/i9corp/voip/model/VoipAccount.h src/i9corp/voip/model/VoipPlayback.cpp include/i9corp/voip/model/VoipPlayback.h src/i9corp/voip/controller/VoipHandlerController.cpp include/i9corp/voip/controller/VoipRegisterStateController.h
+   )
+
+target_link_libraries(i9corp-voip-sdk pjproject ${EXTRA_LIB})
 

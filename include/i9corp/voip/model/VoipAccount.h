@@ -6,6 +6,7 @@
 #define I9CORP_VOIP_SDK_VOIPACCOUNT_H
 
 #include <pjsua2.hpp>
+#include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
 #include <i9corp/voip/controller/VoipRegisterStateController.h>
 #include <i9corp/voip/model/VoipCall.h>
@@ -15,7 +16,7 @@
 using namespace i9corp;
 
 namespace i9corp {
-    class VoipAccount : public pj::Account {
+    class DLL_EXPORT VoipAccount : public pj::Account {
     public:
         VoipAccount(int line, VoipRegisterStateController *stateController, VoipHandlerController *handlerController);
 
