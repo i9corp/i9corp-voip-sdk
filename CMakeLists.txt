@@ -10,32 +10,97 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(./include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjlib/include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjlib-util/include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjnath/include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjmedia/include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjsip/include)
 
-include_directories(./third-parties/pjsip/pjlib/include)
-include_directories(./third-parties/pjsip/pjlib-util/include)
-include_directories(./third-parties/pjsip/pjnath/include)
-include_directories(./third-parties/pjsip/pjmedia/include)
-include_directories(./third-parties/pjsip/pjsip/include)
+set(LIBRARY_DIR ${LIBRARY_DIR} ./lib )
+set(LIBRARY_DIR ${LIBRARY_DIR} ./third-parties/pjsip/lib)
 
-add_subdirectory(./third-parties/pjsip)
 
-link_directories(./lib)
-link_directories(./third-parties/pjsip/lib)
-
-# set(THIRD_PARTIES_DEPS ${CMAKE_CURRENT_SOURCE_DIR}/lib/pjproject.a)
-
-add_library(i9corp-voip-sdk SHARED include/i9corp/voip/common/CommonExport.h src/i9corp/voip/common/CommonBuildLibrary.h src/i9corp/voip/model/VoipLine.cpp include/i9corp/voip/model/VoipLine.h include/i9corp/voip/controller/VoipHandlerController.h src/i9corp/voip/model/VoipCall.cpp include/i9corp/voip/model/VoipCall.h src/i9corp/voip/tools/VoipTools.cpp include/i9corp/voip/tools/VoipTools.h src/i9corp/voip/model/VoipAccount.cpp include/i9corp/voip/model/VoipAccount.h src/i9corp/voip/model/VoipPlayback.cpp include/i9corp/voip/model/VoipPlayback.h src/i9corp/voip/controller/VoipHandlerController.cpp include/i9corp/voip/controller/VoipRegisterStateController.h
-        )
 
 if ((${CMAKE_SYSTEM_NAME} MATCHES "(Windows)"))
-    set(EXTRA_LIB ws2_32)
+
+    set(MINGW_BASE_DIR  "C:/MinGW")
+    set(MINGW_BASE_ARCH_DIR  "C:/MinGW/x86_64-w64-mingw32")
+
+    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/include)
+        set(INCLUDE_DIR ${INCLUDE_DIR} ${MINGW_BASE_ARCH_DIR}/include)
+    endif()
+
+    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/lib64)
+        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_ARCH_DIR}/lib64)
+    endif()
+
+    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/lib)
+        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_ARCH_DIR}/lib)
+    endif()
+
+    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/include)
+        set(INCLUDE_DIR ${INCLUDE_DIR} ${MINGW_BASE_DIR}/include)
+    endif()
+
+    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/lib64)
+        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_DIR}/lib64)
+    endif()
+
+    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/lib)
+        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_DIR}/lib)
+    endif()
+
+
+    find_library(WSOCK32_LIBRARY wsock32)
+    if(NOT WSOCK32_LIBRARY)
+        message(FATAL_ERROR "wsock32 library not found")
+    endif()
+
+    find_library(WS2_32_LIBRARY ws2_32)
+    if(NOT WS2_32_LIBRARY)
+        message(FATAL_ERROR "ws2_32 library not found")
+    endif()
+
+    set(EXTRA_LIB ${EXTRA_LIB} wsock32)
+    set(EXTRA_LIB ${EXTRA_LIB} ws2_32)
 endif ()
+
+
+include_directories(${INCLUDE_DIR})
+link_directories(${LIBRARY_DIR})
+
+
+
+find_library(CRYTPO_LIBRARY crypto PATHS ${LIBRARY_DIR})
+if(NOT CRYTPO_LIBRARY)
+    message(FATAL_ERROR "crypto library not found")
+endif()
+set(EXTRA_LIB ${EXTRA_LIB} crypto)
+
+find_library(SSL_LIBRARY ssl PATHS ${LIBRARY_DIR})
+if(NOT SSL_LIBRARY)
+    message(FATAL_ERROR "openssl library not found")
+endif()
+set(EXTRA_LIB ${EXTRA_LIB} ssl)
+
+find_library(PTHREAD_LIBRARY pthread PATHS ${LIBRARY_DIR})
+if(NOT PTHREAD_LIBRARY)
+    message(FATAL_ERROR "pthread library not found")
+endif()
+set(EXTRA_LIB ${EXTRA_LIB} pthread)
 
 ################################################################################
 # Print summary
 ################################################################################
 message("Target OS:       ${CMAKE_SYSTEM_NAME}")
 message("Resume:")
+message("INCLUDE_DIR:     ${INCLUDE_DIR}")
+message("LIBRARY_DIR:     ${LIBRARY_DIR}")
+message("EXTRA_LIB:       ${EXTRA_LIB}")
 
-target_link_libraries(i9corp-voip-sdk pjproject ${EXTRA_LIB} crypto ssl pthread)
+add_subdirectory(./third-parties/pjsip)
+add_library(i9corp-voip-sdk SHARED include/i9corp/voip/common/CommonExport.h src/i9corp/voip/common/CommonBuildLibrary.h src/i9corp/voip/model/VoipLine.cpp include/i9corp/voip/model/VoipLine.h include/i9corp/voip/controller/VoipHandlerController.h src/i9corp/voip/model/VoipCall.cpp include/i9corp/voip/model/VoipCall.h src/i9corp/voip/tools/VoipTools.cpp include/i9corp/voip/tools/VoipTools.h src/i9corp/voip/model/VoipAccount.cpp include/i9corp/voip/model/VoipAccount.h src/i9corp/voip/model/VoipPlayback.cpp include/i9corp/voip/model/VoipPlayback.h src/i9corp/voip/controller/VoipHandlerController.cpp include/i9corp/voip/controller/VoipRegisterStateController.h
+        )
+target_link_libraries(i9corp-voip-sdk pjproject wsock32 ws2_32 crypto ssl pthread )
+
