@@ -5,6 +5,14 @@
 #ifndef I9CORP_VOIP_SDK_COMMON_EXPORT_H
 #define I9CORP_VOIP_SDK_COMMON_EXPORT_H
 
+#define PJ_WIN32_WINCE 1
+#ifndef PJ_DLL
+#define PJ_DLL  1
+#ifdef _LIB
+#   define PJ_EXPORTING 1
+#endif
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -12,6 +12,8 @@
 #include <i9corp/voip/model/VoipAccount.h>
 #include <pjsua2.hpp>
 
+using namespace pj;
+
 namespace i9corp {
 
 

@@ -1,5 +1,11 @@
-#define PJ_EXPORT_SPECIFIER  __declspec(dllexport)
-#define PJ_IMPORT_SPECIFIER  __declspec(dllimport)
+#ifndef I9CORP_VOIP_SDK_CONFIG_SITE_H
+#define I9CORP_VOIP_SDK_CONFIG_SITE_H
+
+#define PJ_DLL 1
+#define PJ_EXPORTING 1
+
+#define PJ_EXPORT_SPECIFIER __declspec(dllexport)
+#define PJ_IMPORT_SPECIFIER __declspec(dllimport)
 
 // Uncomment to get minimum footprint (suitable for 1-2 concurrent calls only)
 #define PJ_CONFIG_MINIMAL_SIZE
@@ -27,4 +33,8 @@
 #define PJMEDIA_HAS_INTEL_IPP_CODEC_G722_1  0
 #define PJSIP_REGISTER_CLIENT_CHECK_CONTACT 0
 
-#include <pj/config_site_sample.h>
+#if defined(PJ_WIN32)
+//#define _MSC_VER 1
+#endif
+
+#endif
