@@ -11,45 +11,17 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(INCLUDE_DIR ${INCLUDE_DIR} ./include)
+set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjsip/include)
 set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjlib/include)
 set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjlib-util/include)
 set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjnath/include)
 set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjmedia/include)
-set(INCLUDE_DIR ${INCLUDE_DIR} ./third-parties/pjsip/pjsip/include)
+
 
 set(LIBRARY_DIR ${LIBRARY_DIR} ./lib )
 set(LIBRARY_DIR ${LIBRARY_DIR} ./third-parties/pjsip/lib)
 
 if ((${CMAKE_SYSTEM_NAME} MATCHES "(Windows)"))
-
-    set(MINGW_BASE_DIR  "C:/MinGW")
-    set(MINGW_BASE_ARCH_DIR  "${MINGW_BASE_DIR}/x86_64-w64-mingw32")
-
-    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/include)
-        set(INCLUDE_DIR ${INCLUDE_DIR} ${MINGW_BASE_ARCH_DIR}/include)
-    endif()
-
-    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/lib64)
-        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_ARCH_DIR}/lib64)
-    endif()
-
-    if (EXISTS "${MINGW_BASE_ARCH_DIR}" AND EXISTS ${MINGW_BASE_ARCH_DIR}/lib)
-        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_ARCH_DIR}/lib)
-    endif()
-
-    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/include)
-        set(INCLUDE_DIR ${INCLUDE_DIR} ${MINGW_BASE_DIR}/include)
-    endif()
-
-    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/lib64)
-        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_DIR}/lib64)
-    endif()
-
-    if (EXISTS "${MINGW_BASE_DIR}" AND EXISTS ${MINGW_BASE_DIR}/lib)
-        set(LIBRARY_DIR ${LIBRARY_DIR} ${MINGW_BASE_DIR}/lib)
-    endif()
-
-
     find_library(WSOCK32_LIBRARY wsock32)
     if(NOT WSOCK32_LIBRARY)
         message(FATAL_ERROR "wsock32 library not found")
