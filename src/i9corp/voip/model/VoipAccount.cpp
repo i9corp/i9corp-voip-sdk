@@ -12,6 +12,7 @@ VoipAccount::VoipAccount(int line, VoipRegisterStateController *stateController,
                          VoipHandlerController *handlerController) {
     this->handler = handlerController;
     this->state = stateController;
+    this->line = line;
 }
 
 VoipAccount::~VoipAccount() {

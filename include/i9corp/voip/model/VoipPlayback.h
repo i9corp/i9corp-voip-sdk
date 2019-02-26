@@ -8,7 +8,7 @@
 #include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
 #include <pjsua2.hpp>
-#include <thread>
+#include <pthread.h>
 
 namespace i9corp {
     class DLL_EXPORT VoipPlayback {
@@ -38,7 +38,7 @@ namespace i9corp {
         bool startPlayer();
         bool stopPlayer();
 
-        static void run(VoipPlayback *playback);
+        static void * run(void *mData);
     private:
         VoipHandlerController *handler;
         pjmedia_snd_port *snd_port;
@@ -48,7 +48,7 @@ namespace i9corp {
         pj_thread_t *thread;
         pj_caching_pool cp;
 
-        std::thread player;
+        pthread_t player;
         void setRingtone(const char *ringtone);
 
     };

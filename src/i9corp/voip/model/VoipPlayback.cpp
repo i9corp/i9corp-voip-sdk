@@ -41,6 +41,7 @@ bool VoipPlayback::start() {
         return false;
     }
     this->keepPlaying();
+    return true;
 }
 
 void VoipPlayback::keepPlaying() {
@@ -169,8 +170,8 @@ bool VoipPlayback::stopPlayer() {
     pj_caching_pool_destroy(&cp);
     pj_shutdown();
 
-    if (this->player.joinable()) {
-        this->player.detach();
+    if(pthread_detach(this->player) == -1){
+        return false;
     }
     return true;
 }
@@ -181,12 +182,16 @@ bool VoipPlayback::play() {
         this->handler->onError("Already is running");
         return false;
     }
-    player = std::thread(VoipPlayback::run, this);
-    player.join();
+
+    if (pthread_create(&this->player, nullptr, &VoipPlayback::run, (void *) this) == -1) {
+        return false;
+    }
+    pthread_join(this->player, nullptr);
     return true;
 }
 
-void VoipPlayback::run(VoipPlayback *playback) {
+void *VoipPlayback::run(void *mData) {
+    VoipPlayback *playback = static_cast<VoipPlayback *>(mData);
     playback->start();
 }
 
