@@ -11,7 +11,10 @@
 namespace i9corp {
     class DLL_EXPORT VoipRegisterStateController {
     public:
-        virtual void onChangeRegisterState(TVoipLineStatus status) = 0;
+        virtual void onChangeRegisterState(TVoipLineStatus status)
+        {
+
+        }
     };
 }
 

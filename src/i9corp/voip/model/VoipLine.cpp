@@ -147,6 +147,7 @@ bool VoipLine::deactivate() {
     pj_thread_sleep(4000);
     this->endpoint.libDestroy();
     this->setStatus(TVoipLineStatus::UNREGISTERED);
+    return true;
 }
 
 void VoipLine::initialize() {

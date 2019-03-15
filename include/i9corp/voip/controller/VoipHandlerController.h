@@ -36,7 +36,7 @@ namespace i9corp {
     public:
         VoipHandlerController();
 
-        ~VoipHandlerController();
+        virtual ~VoipHandlerController();
 
         // System
         virtual bool isAutoAnswer() = 0;
@@ -45,35 +45,35 @@ namespace i9corp {
 
         void onNotice(const char *message, ...);
 
-        virtual const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber) = 0;
+         const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber);
 
         TVoipCallDirection getDirection(const char *number);
 
         // Call
 
-        virtual bool onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+         bool onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
 
-        virtual bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+         bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
 
-        virtual bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+         bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
 
 
-        virtual void
-        onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+         void
+        onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
 
-        virtual void
-        onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+         void
+        onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
 
-        virtual void onAnswer(int line, long callId, const char *phoneNumber) = 0;
+         void onAnswer(int line, long callId, const char *phoneNumber);
 
-        virtual void onChangeRegisterState(int line, TVoipLineStatus status) = 0;
+         void onChangeRegisterState(int line, TVoipLineStatus status);
 
-        virtual void onHangup(int line, int callId) = 0;
+         void onHangup(int line, int callId);
 
-        virtual void onInMute(int line, int callId, bool value) = 0;
+         void onInMute(int line, int callId, bool value) ;
 
-        virtual void onInHold(int line, int callId, bool value) = 0;
-        virtual void onChangeVolume(int line, int volume) = 0;
+         void onInHold(int line, int callId, bool value);
+         void onChangeVolume(int line, int volume);
 
     };
 }

@@ -22,7 +22,7 @@ namespace i9corp {
         VoipLine(int number, VoipHandlerController *controller, const char *username, const char *password,
                  const char *hostname, unsigned short port);
 
-        ~VoipLine();
+       virtual  ~VoipLine();
 
         bool active();
 
