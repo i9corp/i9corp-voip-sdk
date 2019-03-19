@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
-
+#include <pjsua2.hpp>
 using namespace i9corp;
 
 VoipLine::VoipLine(int number, VoipHandlerController *controller) {
@@ -67,23 +67,28 @@ bool VoipLine::active() {
         return false;
     }
 
-    this->endpoint.libCreate();
-    this->endpoint.libInit(this->endpointConfig);
-    this->transportConfig.port = this->port;
+    auto ep = this->endpoint;
+    // Initialize endpoint
+    EpConfig endpointConfig;
+    ep->libInit(endpointConfig);
 
-
-    this->endpointConfig.uaConfig.userAgent = "I9Corp Mamute 1.0.0";
+    // Create SIP transport. Error handling sample is shown
+    TransportConfig transportConfig;
+    transportConfig.port = this->port;
 
     try {
-        this->endpoint.transportCreate(PJSIP_TRANSPORT_UDP, this->transportConfig);
-        this->endpoint.transportCreate(PJSIP_TRANSPORT_TCP, this->transportConfig);
-    } catch (pj::Error &err) {
+        ep->transportCreate(PJSIP_TRANSPORT_UDP, transportConfig);
+        ep->transportCreate(PJSIP_TRANSPORT_TCP, transportConfig);
+    } catch (Error &err) {
         this->handler->onError(err.info().c_str());
         return false;
     }
 
-    this->endpoint.libStart();
+    ep->libStart();
     this->handler->onNotice("Native pjsip lib is started");
+
+    AccountConfig accountConfig;
+    endpointConfig.uaConfig.userAgent = "I9Corp Mamute 1.0.0";
 
     std::stringstream sIdUri;
     sIdUri << "sip:" << this->username << "@" << this->hostname;
@@ -93,40 +98,32 @@ bool VoipLine::active() {
     sRegUri << "sip:" << this->hostname;
     this->setRegUri(sRegUri.str().c_str());
 
-    this->accountConfig.idUri = this->idUri;
-    this->accountConfig.regConfig.registrarUri = this->regUri;
+    accountConfig.idUri = this->idUri;
+    accountConfig.regConfig.registrarUri = this->regUri;
 
-    this->accountConfig.sipConfig.proxies.clear();
-    this->accountConfig.sipConfig.proxies.push_back(this->regUri);
+    AuthCredInfo cred("digest", "*", this->username, 0, this->password);
+    accountConfig.sipConfig.authCreds.clear();
+    accountConfig.sipConfig.authCreds.push_back(cred);
 
-    this->accountConfig.sipConfig.authCreds.clear();
-    this->accountConfig.sipConfig.authCreds.push_back(
-            pj::AuthCredInfo("digest", "*", this->username, 0, this->password)
-    );
 
-    this->accountConfig.callConfig.timerMinSESec = 120;
-    this->accountConfig.callConfig.timerSessExpiresSec = 1800;
-    this->accountConfig.regConfig.retryIntervalSec = 300;
-    this->accountConfig.regConfig.firstRetryIntervalSec = 60;
-    this->accountConfig.natConfig.mediaStunUse = PJSUA_STUN_USE_DISABLED;
+    accountConfig.callConfig.timerMinSESec = 120;
+    accountConfig.callConfig.timerSessExpiresSec = 1800;
+    accountConfig.regConfig.retryIntervalSec = 300;
+    accountConfig.regConfig.firstRetryIntervalSec = 60;
+    accountConfig.natConfig.mediaStunUse = PJSUA_STUN_USE_DISABLED;
 
-    // pjsip_cfg()->endpt.disable_rport = PJ_FALSE;
-    // pjsip_cfg()->endpt.disable_tcp_switch = PJ_TRUE;
-    // pjsip_cfg()->endpt.allow_port_in_fromto_hdr = PJ_TRUE;
-    // pjsip_cfg()->endpt.use_compact_form = PJ_FALSE;
+    accountConfig.natConfig.viaRewriteUse = false;
+    accountConfig.natConfig.sdpNatRewriteUse = PJ_FALSE;
 
-    this->accountConfig.natConfig.viaRewriteUse = false;
-    this->accountConfig.natConfig.sdpNatRewriteUse = PJ_FALSE;
-
-    this->endpointConfig.uaConfig.stunServer.clear();
+    endpointConfig.uaConfig.stunServer.clear();
     if (this->stunServer != nullptr) {
-        this->accountConfig.natConfig.mediaStunUse = PJSUA_STUN_USE_DEFAULT;
-        this->endpointConfig.uaConfig.stunServer.push_back(this->stunServer);
+        accountConfig.natConfig.mediaStunUse = PJSUA_STUN_USE_DEFAULT;
+        endpointConfig.uaConfig.stunServer.push_back(this->stunServer);
     }
-    this->endpointConfig.uaConfig.natTypeInSdp = 2;
+    endpointConfig.uaConfig.natTypeInSdp = 2;
     // Setup the account
     auto *a = new VoipAccount(this->number, this, this->handler);
-    a->create(this->accountConfig);
+    a->create(accountConfig);
 
     if (this->account != nullptr) {
         delete this->account;
@@ -143,9 +140,12 @@ bool VoipLine::deactivate() {
         this->account = nullptr;
     }
     pj_thread_sleep(4000);
-    this->endpoint.hangupAllCalls();
-    pj_thread_sleep(4000);
-    this->endpoint.libDestroy();
+    auto ep = this->endpoint;
+    if (ep != nullptr) {
+        ep->hangupAllCalls();
+        pj_thread_sleep(4000);
+        ep->libDestroy();
+    }
     this->setStatus(TVoipLineStatus::UNREGISTERED);
     return true;
 }
@@ -163,6 +163,8 @@ void VoipLine::initialize() {
     this->account = nullptr;
     this->id = 0;
     this->setStatus(TVoipLineStatus::UNREGISTERED);
+    pj::Endpoint ep = pj::Endpoint::instance();
+    this->endpoint = &ep;
 }
 
 char *VoipLine::getUsername() const {

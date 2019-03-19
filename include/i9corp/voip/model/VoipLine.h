@@ -12,6 +12,8 @@
 #include <i9corp/voip/model/VoipAccount.h>
 #include <pjsua2.hpp>
 
+using  namespace pj;
+
 namespace i9corp {
 
 
@@ -118,11 +120,7 @@ namespace i9corp {
         char *idUri;
 
         // PJSIP
-        pj::Endpoint endpoint;
-        pj::TransportConfig transportConfig;
-        pj::AccountConfig accountConfig;
-        pj::EpConfig endpointConfig;
-        pj::AuthCredInfo cred;
+        Endpoint * endpoint;
     };
 
 }
