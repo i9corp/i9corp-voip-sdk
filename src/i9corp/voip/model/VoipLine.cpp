@@ -18,14 +18,17 @@ VoipLine::VoipLine(int number, VoipHandlerController *controller) {
         throw "Controller is null";
     }
 
-    this->initialize();
     this->number = number;
     this->handler = controller;
+    this->initialize();
     this->port = 5060;
 }
 
 void VoipLine::setStatus(TVoipLineStatus value) {
     this->status = value;
+    if(this->handler == nullptr){
+        return;
+    }
     this->handler->onChangeRegisterState(this->number, this->status);
 }
 
@@ -34,10 +37,9 @@ VoipLine::VoipLine(int number, VoipHandlerController *controller, const char *us
     if (controller == nullptr) {
         throw "Controller is null";
     }
-
-    this->initialize();
-    this->number = number;
     this->handler = controller;
+    this->number = number;
+    this->initialize();
     this->port = port;
     this->setUsername(username);
     this->setPassword(password);
@@ -163,8 +165,15 @@ void VoipLine::initialize() {
     this->account = nullptr;
     this->id = 0;
     this->setStatus(TVoipLineStatus::UNREGISTERED);
-    pj::Endpoint ep = pj::Endpoint::instance();
-    this->endpoint = &ep;
+    Endpoint *ep = new Endpoint();
+    try {
+        ep->libCreate();
+        this->endpoint = ep;
+    } catch(Error& err) {
+        handler->onError("Startup error: %s" ,  err.info().c_str());
+        delete ep;
+        this->endpoint = nullptr;
+    }
 }
 
 char *VoipLine::getUsername() const {

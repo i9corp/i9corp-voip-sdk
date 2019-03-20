@@ -8,74 +8,57 @@
 #include <i9corp/voip/common/CommonExport.h>
 
 namespace i9corp {
-    typedef enum eVoipCallDirection {
-        OUTGOING,
-        INCOMING,
-        INTERNAL,
-        EXTERNAL
-    } TVoipCallDirection;
+typedef enum eVoipCallDirection {
+    OUTGOING,
+    INCOMING,
+    INTERNAL,
+    EXTERNAL
+} TVoipCallDirection;
 
-    typedef enum eVoipLineStatus {
-        REGISTERED,
-        UNREGISTERED,
-        REGISTERING,
-        UNREGISTERING
-    } TVoipLineStatus;
+typedef enum eVoipLineStatus {
+    REGISTERED,
+    UNREGISTERED,
+    REGISTERING,
+    UNREGISTERING
+} TVoipLineStatus;
 
-    typedef enum eVoipCallStatus {
-        HANGUP,
-        TRANSFERRING,
-        DIALING,
-        RECEIVING,
-        ANSWERED,
-        RINGING,
-        REJECT
-    } TVoipCallStatus;
+typedef enum eVoipCallStatus {
+    HANGUP,
+    TRANSFERRING,
+    DIALING,
+    RECEIVING,
+    ANSWERED,
+    RINGING,
+    REJECT
+} TVoipCallStatus;
 
-    class DLL_EXPORT VoipHandlerController {
-    public:
-        VoipHandlerController();
-
-        virtual ~VoipHandlerController();
-
-        // System
-        virtual bool isAutoAnswer() = 0;
-
-        void onError(const char *message, ...);
-
-        void onNotice(const char *message, ...);
-
-         const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber);
-
-        TVoipCallDirection getDirection(const char *number);
-
-        // Call
-
-         bool onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
-
-         bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
-
-         bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
+class DLL_EXPORT VoipHandlerController {
+public:
+    // System
+    virtual bool isAutoAnswer() = 0;
 
 
-         void
-        onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
+    // Call
+    virtual const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber) = 0;
+    virtual bool onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+    virtual bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+    virtual bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)= 0;
+    virtual void onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+    virtual void onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+    virtual void onAnswer(int line, long callId, const char *phoneNumber) = 0;
+    virtual void onChangeRegisterState(int line, TVoipLineStatus status) = 0;
+    virtual void onHangup(int line, int callId) = 0;
+    virtual void onInMute(int line, int callId, bool value) = 0;
+    virtual void onInHold(int line, int callId, bool value) = 0;
+    virtual void onChangeVolume(int line, int volume) = 0;
 
-         void
-        onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
+    virtual void onError(const char *message, ...)= 0;
 
-         void onAnswer(int line, long callId, const char *phoneNumber);
+    virtual void onNotice(const char *message, ...)= 0;
 
-         void onChangeRegisterState(int line, TVoipLineStatus status);
+    virtual TVoipCallDirection getDirection(const char *number)= 0;
 
-         void onHangup(int line, int callId);
-
-         void onInMute(int line, int callId, bool value) ;
-
-         void onInHold(int line, int callId, bool value);
-         void onChangeVolume(int line, int volume);
-
-    };
+};
 }
 
 #endif //I9CORP_VOIP_SDK_VOIP_HANDLER_CONTROLLER_H
