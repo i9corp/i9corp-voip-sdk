@@ -38,6 +38,11 @@ void VoipHandlerController::onNotice(const char *message, ...) {
     va_end(list);
 }
 
+const char *VoipHandlerController::getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber)
+{
+    throw "Not implemented yet";
+}
+
 TVoipCallDirection VoipHandlerController::getDirection(const char *number) {
     if (number == nullptr || strlen(number)) {
         return EXTERNAL;
@@ -47,4 +52,59 @@ TVoipCallDirection VoipHandlerController::getDirection(const char *number) {
     }
     return EXTERNAL;
 
+}
+
+bool VoipHandlerController::onReject(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)
+{
+    throw "Not implemented yet";
+}
+
+bool VoipHandlerController::onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)
+{
+    throw "Not implemented yet";
+}
+
+bool VoipHandlerController::onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onAnswer(int line, long callId, const char *phoneNumber)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onChangeRegisterState(int line, TVoipLineStatus status)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onHangup(int line, int callId)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onInMute(int line, int callId, bool value)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onInHold(int line, int callId, bool value)
+{
+    throw "Not implemented yet";
+}
+
+void VoipHandlerController::onChangeVolume(int line, int volume)
+{
+    throw "Not implemented yet";
 }

@@ -24,7 +24,7 @@ namespace i9corp {
         VoipLine(int number, VoipHandlerController *controller, const char *username, const char *password,
                  const char *hostname, unsigned short port);
 
-        ~VoipLine();
+       virtual  ~VoipLine();
 
         bool active();
 
@@ -120,11 +120,7 @@ namespace i9corp {
         char *idUri;
 
         // PJSIP
-        pj::Endpoint endpoint;
-        pj::TransportConfig transportConfig;
-        pj::AccountConfig accountConfig;
-        pj::EpConfig endpointConfig;
-        pj::AuthCredInfo cred;
+        Endpoint * endpoint;
     };
 
 }
