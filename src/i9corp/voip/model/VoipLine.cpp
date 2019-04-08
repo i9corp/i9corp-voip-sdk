@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <sstream>
 #include <pjsua2.hpp>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <winsock2.h>
+
 using namespace i9corp;
 
 VoipLine::VoipLine(int number, VoipHandlerController *controller) {
@@ -80,7 +84,7 @@ bool VoipLine::active() {
 
     try {
         ep->transportCreate(PJSIP_TRANSPORT_UDP, transportConfig);
-        ep->transportCreate(PJSIP_TRANSPORT_TCP, transportConfig);
+        // ep->transportCreate(PJSIP_TRANSPORT_TCP, transportConfig);
     } catch (Error &err) {
         this->handler->onError(err.info().c_str());
         return false;
@@ -102,11 +106,11 @@ bool VoipLine::active() {
 
     accountConfig.idUri = this->idUri;
     accountConfig.regConfig.registrarUri = this->regUri;
+    accountConfig.sipConfig.proxies.push_back(this->regUri);
 
     AuthCredInfo cred("digest", "*", this->username, 0, this->password);
     accountConfig.sipConfig.authCreds.clear();
     accountConfig.sipConfig.authCreds.push_back(cred);
-
 
     accountConfig.callConfig.timerMinSESec = 120;
     accountConfig.callConfig.timerSessExpiresSec = 1800;
@@ -114,8 +118,11 @@ bool VoipLine::active() {
     accountConfig.regConfig.firstRetryIntervalSec = 60;
     accountConfig.natConfig.mediaStunUse = PJSUA_STUN_USE_DISABLED;
 
-    accountConfig.natConfig.viaRewriteUse = false;
+    accountConfig.natConfig.viaRewriteUse = PJ_FALSE;
     accountConfig.natConfig.sdpNatRewriteUse = PJ_FALSE;
+    accountConfig.natConfig.contactRewriteUse = PJ_FALSE;
+    accountConfig.natConfig.contactRewriteMethod = PJ_FALSE;
+    accountConfig.natConfig.contactUseSrcPort = PJ_FALSE;
 
     endpointConfig.uaConfig.stunServer.clear();
     if (this->stunServer != nullptr) {

@@ -59,3 +59,29 @@ target_link_libraries(i9corp-voip-sdk  ${REQUIRED_LIBRARIES})
 target_include_directories(i9corp-voip-sdk PUBLIC ${PJSIP_INCLUDE_DIRS})
 target_compile_options(i9corp-voip-sdk PUBLIC ${PJSIP_CFLAGS_OTHER})
 
+
+set(I9CORP_BINDIR bin)
+set(I9CORP_BINCOMPONENT runtime)
+set(I9CORP_LIBDIR lib)
+set(I9CORP_LIBCOMPONENT dev)
+set(I9CORP_INCLUDEDIR)
+set(I9CORP_INCLUDECOMPONENT dev)
+
+message("Install dir: ${CMAKE_INSTALL_PREFIX}" )
+install(DIRECTORY include/i9corp/voip/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/i9corp/voip")
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION ${I9CORP_BINDIR} COMPONENT ${I9CORP_BINCOMPONENT}
+        LIBRARY DESTINATION ${I9CORP_LIBDIR} COMPONENT ${I9CORP_LIBCOMPONENT}
+        ARCHIVE DESTINATION ${I9CORP_LIBDIR} COMPONENT ${I9CORP_LIBCOMPONENT}
+        PUBLIC_HEADER DESTINATION ${I9CORP_INCLUDEDIR} COMPONENT ${I9CORP_INCLUDECOMPONENT})
+
+if(NOT TARGET uninstall)
+    configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+            IMMEDIATE @ONLY)
+
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    # xargs rm < install_manifest.txt
+endif()
