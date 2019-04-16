@@ -1,0 +1,12 @@
+/usr/local/include/i9corp/voip/common/CommonExport.h
+/usr/local/include/i9corp/voip/common/config_site.h
+/usr/local/include/i9corp/voip/controller/VoipHandlerController.h
+/usr/local/include/i9corp/voip/controller/VoipRegisterStateController.h
+/usr/local/include/i9corp/voip/model/VoipAccount.h
+/usr/local/include/i9corp/voip/model/VoipCall.h
+/usr/local/include/i9corp/voip/model/VoipLine.h
+/usr/local/include/i9corp/voip/model/VoipPlayback.h
+/usr/local/include/i9corp/voip/model/VoipType.h
+/usr/local/include/i9corp/voip/tools/VoipTools.h
+/usr/local/lib/libi9corp-voip-sdk.dll.a
+/usr/local/bin/libi9corp-voip-sdk.so

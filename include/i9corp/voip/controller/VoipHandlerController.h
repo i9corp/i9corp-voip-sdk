@@ -6,31 +6,11 @@
 #define I9CORP_VOIP_SDK_VOIP_HANDLER_CONTROLLER_H
 
 #include <i9corp/voip/common/CommonExport.h>
+#include <stdlib.h>
+#include <i9corp/voip/model/VoipType.h>
 
+using namespace i9corp;
 namespace i9corp {
-typedef enum eVoipCallDirection {
-    OUTGOING,
-    INCOMING,
-    INTERNAL,
-    EXTERNAL
-} TVoipCallDirection;
-
-typedef enum eVoipLineStatus {
-    REGISTERED,
-    UNREGISTERED,
-    REGISTERING,
-    UNREGISTERING
-} TVoipLineStatus;
-
-typedef enum eVoipCallStatus {
-    HANGUP,
-    TRANSFERRING,
-    DIALING,
-    RECEIVING,
-    ANSWERED,
-    RINGING,
-    REJECT
-} TVoipCallStatus;
 
 class DLL_EXPORT VoipHandlerController {
 public:

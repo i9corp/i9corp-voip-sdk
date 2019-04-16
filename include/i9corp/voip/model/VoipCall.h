@@ -34,6 +34,9 @@ namespace i9corp {
 
         VoipHandlerController *handler;
         char *number;
+    public:
+
+    private:
         bool muted;
 
         VoipPlayback *playback;
@@ -50,6 +53,7 @@ namespace i9corp {
         void onCallMediaState(pj::OnCallMediaStateParam &prm) override;
 
     private:
+        void setNumber(const char *number);
         void setPlayback(VoipPlayback *playback);
         bool inHold;
         int line;

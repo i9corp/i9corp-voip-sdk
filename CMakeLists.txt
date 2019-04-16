@@ -60,6 +60,9 @@ target_include_directories(i9corp-voip-sdk PUBLIC ${PJSIP_INCLUDE_DIRS})
 target_compile_options(i9corp-voip-sdk PUBLIC ${PJSIP_CFLAGS_OTHER})
 
 
+add_executable(voip-demo extras/main.cpp)
+target_link_libraries(voip-demo i9corp-voip-sdk)
+
 set(I9CORP_BINDIR bin)
 set(I9CORP_BINCOMPONENT runtime)
 set(I9CORP_LIBDIR lib)

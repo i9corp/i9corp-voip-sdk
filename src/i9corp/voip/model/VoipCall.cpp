@@ -16,13 +16,14 @@ VoipCall::VoipCall(int line, VoipHandlerController *controller, pj::Account &acc
     this->muted = false;
     this->playback = nullptr;
     this->line = line;
+    this->number = nullptr;
 }
 
 
 const char *VoipCall::getNumber() {
     if (this->number == nullptr) {
         pj::CallInfo ci = getInfo();
-        this->number = VoipTools::getPhoneNumberFromUri(ci.remoteUri.c_str());
+        this->setNumber(VoipTools::getPhoneNumberFromUri(ci.remoteUri.c_str()));
     }
     return number;
 }
@@ -164,5 +165,14 @@ void VoipCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
         aud_med->startTransmit(mgr.getPlaybackDevMedia());
         mgr.getCaptureDevMedia().startTransmit(*aud_med);
     }
+}
+
+
+void VoipCall::setNumber(const char *number) {
+    char *mValue = number == nullptr ? nullptr : strdup(number);
+    if(this->number != nullptr){
+        free(this->number);
+    }
+    this->number = mValue;
 }
 
