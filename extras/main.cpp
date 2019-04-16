@@ -84,6 +84,10 @@ public:
         return TVoipCallDirection::EXTERNAL;
     }
 
+    void onRingStop(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
+
+    }
+
 };
 
 int main(int argc, char *argv[]) {

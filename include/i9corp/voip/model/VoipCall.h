@@ -7,7 +7,6 @@
 
 #include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
-#include <i9corp/voip/model/VoipPlayback.h>
 #include <pjsua2.hpp>
 
 using namespace i9corp;
@@ -26,12 +25,6 @@ namespace i9corp {
 
     private:
 
-        bool ringStop();
-
-        bool ringStart(TVoipCallDirection direction);
-
-        bool ringStart();
-
         VoipHandlerController *handler;
         char *number;
     public:
@@ -39,7 +32,6 @@ namespace i9corp {
     private:
         bool muted;
 
-        VoipPlayback *playback;
     public:
 
     public:
@@ -54,7 +46,6 @@ namespace i9corp {
 
     private:
         void setNumber(const char *number);
-        void setPlayback(VoipPlayback *playback);
         bool inHold;
         int line;
     };

@@ -46,15 +46,13 @@ add_library(i9corp-voip-sdk SHARED
             include/i9corp/voip/model/VoipCall.h
             include/i9corp/voip/tools/VoipTools.h
             include/i9corp/voip/model/VoipAccount.h
-            include/i9corp/voip/model/VoipPlayback.h
 
-            src/i9corp/voip/controller/VoipHandlerController.cpp
+        src/i9corp/voip/controller/VoipHandlerController.cpp
             src/i9corp/voip/model/VoipLine.cpp
             src/i9corp/voip/model/VoipCall.cpp
             src/i9corp/voip/tools/VoipTools.cpp
             src/i9corp/voip/model/VoipAccount.cpp
-            src/i9corp/voip/model/VoipPlayback.cpp
-   )
+        )
 target_link_libraries(i9corp-voip-sdk  ${REQUIRED_LIBRARIES})
 target_include_directories(i9corp-voip-sdk PUBLIC ${PJSIP_INCLUDE_DIRS})
 target_compile_options(i9corp-voip-sdk PUBLIC ${PJSIP_CFLAGS_OTHER})

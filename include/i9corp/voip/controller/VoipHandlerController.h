@@ -25,6 +25,7 @@ public:
     virtual bool onDial(int line, long callId, const char *phoneNumber, TVoipCallDirection direction)= 0;
     virtual void onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
     virtual void onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
+    virtual void onRingStop(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) = 0;
     virtual void onAnswer(int line, long callId, const char *phoneNumber) = 0;
     virtual void onChangeRegisterState(int line, TVoipLineStatus status) = 0;
     virtual void onHangup(int line, int callId) = 0;
