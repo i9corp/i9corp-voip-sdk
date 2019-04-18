@@ -30,7 +30,7 @@ VoipLine::VoipLine(int number, VoipHandlerController *controller) {
 
 void VoipLine::setStatus(TVoipLineStatus value) {
     this->status = value;
-    if(this->handler == nullptr){
+    if (this->handler == nullptr) {
         return;
     }
     this->handler->onChangeRegisterState(this->number, this->status);
@@ -176,8 +176,8 @@ void VoipLine::initialize() {
     try {
         ep->libCreate();
         this->endpoint = ep;
-    } catch(Error& err) {
-        handler->onError("Startup error: %s" ,  err.info().c_str());
+    } catch (Error &err) {
+        handler->onError("Startup error: %s", err.info().c_str());
         delete ep;
         this->endpoint = nullptr;
     }
@@ -388,18 +388,15 @@ bool VoipLine::transfer(long callId, const char *digits) {
 }
 
 bool VoipLine::reject(long callId) {
-    VoipCall *call = this->account->getCall(callId);
+    VoipCall *call = this->getCurrentCall();
     if (call == nullptr) {
         handler->onError("Call not found");
         return false;
     }
-
     try {
         pj::CallOpParam prm;
         prm.statusCode = pjsip_status_code::PJSIP_SC_BUSY_HERE;
-        TVoipCallDirection d = handler->getDirection(call->getNumber());
-        this->handler->onReject(this->number, call->getId(), call->getNumber(), d);
-        call->hangup(prm);
+        call->answer(prm);
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
     }
@@ -512,4 +509,36 @@ bool VoipLine::volume(long callId, unsigned short value) {
 
 void VoipLine::onChangeRegisterState(TVoipLineStatus status) {
     this->setStatus(status);
+}
+
+bool VoipLine::volume(unsigned short value) {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->volume(this->currentCall->getId(), value);
+}
+
+bool VoipLine::reject() {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->reject(this->currentCall->getId());
+}
+
+bool VoipLine::dtmf(const char *digits) {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->dtmf(this->currentCall->getId(), digits);
+}
+
+bool VoipLine::dtmf(char digits) {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->dtmf(this->currentCall->getId(), digits);
 }

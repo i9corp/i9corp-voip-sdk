@@ -4,9 +4,10 @@
 #define PJ_DLL 1
 #define PJ_EXPORTING 1
 
-#define PJ_EXPORT_SPECIFIER __declspec(dllexport)
-#define PJ_IMPORT_SPECIFIER __declspec(dllimport)
 
+#undef PJ_IOQUEUE_MAX_HANDLES
+#define PJ_IOQUEUE_MAX_HANDLES          32
+#define FD_SETSIZE                      1024
 // Uncomment to get minimum footprint (suitable for 1-2 concurrent calls only)
 #define PJ_CONFIG_MINIMAL_SIZE
 

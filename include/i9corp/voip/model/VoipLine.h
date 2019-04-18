@@ -24,7 +24,7 @@ namespace i9corp {
         VoipLine(int number, VoipHandlerController *controller, const char *username, const char *password,
                  const char *hostname, unsigned short port);
 
-       virtual  ~VoipLine();
+        virtual  ~VoipLine();
 
         bool active();
 
@@ -35,9 +35,14 @@ namespace i9corp {
 
         char *toSipNumber(const char *number);
 
+        bool dtmf(char digits);
+
+        bool dtmf(const char *digits);
+
         bool dtmf(long callId, char digits);
 
         bool dtmf(long callId, const char *digits);
+
 
         bool transfer(const char *number);
 
@@ -45,7 +50,11 @@ namespace i9corp {
 
         bool dial(const char *digits);
 
+        bool reject();
+
         bool reject(long callId);
+
+        bool volume(unsigned short value);
 
         bool volume(long callId, unsigned short value);
 
@@ -120,7 +129,7 @@ namespace i9corp {
         char *idUri;
 
         // PJSIP
-        Endpoint * endpoint;
+        Endpoint *endpoint;
     };
 
 }

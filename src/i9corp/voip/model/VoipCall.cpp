@@ -93,6 +93,8 @@ bool VoipCall::isInHold() const {
 void VoipCall::onCallState(pj::OnCallStateParam &prm) {
     TVoipCallDirection d;
     pj::CallInfo ci = getInfo();
+    Call::onCallState(prm);
+
     switch (ci.state) {
         case PJSIP_INV_STATE_DISCONNECTED:
             this->handler->onHangup(this->line, this->getId());
@@ -120,7 +122,7 @@ void VoipCall::onCallState(pj::OnCallStateParam &prm) {
             }
             break;
     }
-    Call::onCallState(prm);
+
 }
 
 void VoipCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {

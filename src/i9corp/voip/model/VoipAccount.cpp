@@ -25,6 +25,9 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     pj::CallInfo ci = call->getInfo();
     pj::CallOpParam prm;
 
+    long id = VoipTools::getLongId(call);
+    this->setCall(id, call);
+
     std::stringstream ss;
     ss << "*** Incoming Call: " << ci.remoteUri << " [" << ci.stateText << "]";
     this->handler->onNotice(ss.str().c_str());
@@ -37,17 +40,12 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     }
 
     call->answer(prm);
-    long id = VoipTools::getLongId(call);
-    this->setCall(id, call);
-
     this->handler->onIncomingRinging(this->line, id, call->getNumber(), TVoipCallDirection::INCOMING);
 }
 
 
 void VoipAccount::onRegState(pj::OnRegStateParam &prm) {
-
     pj::AccountInfo ai = getInfo();
-
     TVoipLineStatus s = ai.regIsActive ? TVoipLineStatus::REGISTERED : TVoipLineStatus::UNREGISTERED;
     this->state->onChangeRegisterState(s);
 }
@@ -66,7 +64,6 @@ void VoipAccount::removeCall(long id) {
 }
 
 void VoipAccount::setCall(long id, VoipCall *call) {
-
     auto it = this->calls.find(id);
     if (it != this->calls.end()) {
         return;
