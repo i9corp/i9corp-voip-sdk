@@ -4,7 +4,7 @@
 #define PJ_DLL 1
 #define PJ_EXPORTING 1
 
-
+#define PJ_NATIVE_STRING_IS_UNICODE 0
 #undef PJ_IOQUEUE_MAX_HANDLES
 #define PJ_IOQUEUE_MAX_HANDLES          32
 #define FD_SETSIZE                      1024

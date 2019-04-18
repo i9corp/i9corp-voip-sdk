@@ -6,18 +6,17 @@
 #include <stdio.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
 #include <i9corp/voip/model/VoipLine.h>
-#include <thread>
 #include <unistd.h>
 
 
 using namespace i9corp;
 
 void testReject(VoipLine *l, long callId) {
-    l->reject();
+ //   l->reject();
 }
 
 void testHangup(VoipLine *l, long callId) {
-    l->hangup();
+    // l->hangup();
 }
 
 class Demo : public VoipHandlerController {
@@ -28,7 +27,7 @@ public:
     TVoipLineStatus status;
 
     bool isAutoAnswer() override {
-        return true;
+        return false;
     }
 
     const char *getWaveRingtone(TVoipCallDirection direction, const char *phoneNumber) override {
@@ -53,8 +52,7 @@ public:
 
     void onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
         fprintf(stdout, "number: %s", phoneNumber);
-        std::thread th(testReject, this->line, callId);
-        th.join();
+
     }
 
     void onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
@@ -63,8 +61,6 @@ public:
 
     void onAnswer(int line, long callId, const char *phoneNumber) override {
         fprintf(stdout, "number: %s", phoneNumber);
-        std::thread th(testHangup, this->line, callId);
-        th.join();
     }
 
     void onChangeRegisterState(int line, TVoipLineStatus status) override {
@@ -118,12 +114,8 @@ public:
 
 int main(int argc, char *argv[]) {
 
-    if (sizeof(pj_fd_set_t) - sizeof(pj_sock_t) >= sizeof(fd_set)) {
-        fprintf(stdout, "error");
-    }
     Demo d;
     d.status = TVoipLineStatus::UNREGISTERED;
-
 
     d.running = true;
     VoipLine line(1, &d, "4080", "4080!", "10.224.110.223", 5060);
