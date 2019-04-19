@@ -104,6 +104,10 @@ namespace i9corp {
 
         void onChangeRegisterState(TVoipLineStatus status) override;
 
+        void onCreateCall(VoipCall *call) override;
+
+        void onRemoveCall(VoipCall *call) override;
+
 
     private:
         void initialize();

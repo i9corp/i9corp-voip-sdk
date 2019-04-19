@@ -59,6 +59,9 @@ void VoipAccount::removeCall(long id) {
     if (it == this->calls.end()) {
         return;
     }
+    if (this->state != nullptr) {
+        this->state->onRemoveCall(it->second);
+    }
     delete it->second;
     this->calls.erase(it);
 }
@@ -69,6 +72,9 @@ void VoipAccount::setCall(long id, VoipCall *call) {
         return;
     }
     this->calls.insert(std::pair<long, VoipCall *>(id, call));
+    if (this->state != nullptr) {
+        this->state->onCreateCall(call);
+    }
 }
 
 VoipCall *VoipAccount::getCall(long id) {

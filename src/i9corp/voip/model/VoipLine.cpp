@@ -263,7 +263,8 @@ bool VoipLine::dial(const char *digits) {
         prm.opt.audioCount = 1;
         prm.opt.videoCount = 0;
         call->makeCall(ss.str(), prm);
-        this->currentCall = call;
+        this->account->setCall(call->getId(), call);
+        // this->currentCall = call;
         TVoipCallDirection d = handler->getDirection(call->getNumber());
         this->handler->onDial(this->number, call->getId(), call->getNumber(), d);
         return true;
@@ -541,4 +542,14 @@ bool VoipLine::dtmf(char digits) {
         return false;
     }
     return this->dtmf(this->currentCall->getId(), digits);
+}
+
+void VoipLine::onCreateCall(VoipCall *call) {
+    this->currentCall = call;
+}
+
+void VoipLine::onRemoveCall(VoipCall *call) {
+    if (this->currentCall == call) {
+        this->currentCall = nullptr;
+    }
 }

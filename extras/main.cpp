@@ -11,14 +11,6 @@
 
 using namespace i9corp;
 
-void testReject(VoipLine *l, long callId) {
- //   l->reject();
-}
-
-void testHangup(VoipLine *l, long callId) {
-    // l->hangup();
-}
-
 class Demo : public VoipHandlerController {
 public:
 
@@ -111,6 +103,8 @@ public:
 #include <pj/os.h>
 #include <pj/assert.h>
 #include <pj/errno.h>
+#include <iostream>
+#include <string>
 
 int main(int argc, char *argv[]) {
 
@@ -122,7 +116,19 @@ int main(int argc, char *argv[]) {
     d.line = &line;
     line.active();
 
-    while (d.running);
+    for (std::string buffer; d.running && std::getline(std::cin, buffer);) {
+        if (!strcasecmp(buffer.c_str(), "hangup")) {
+            line.hangup();
+        } else if (!strcasecmp(buffer.c_str(), "answer")) {
+            line.answer();
+        } else if (!strcasecmp(buffer.c_str(), "reject")) {
+            line.reject();
+        } else {
+            fprintf(stdout, "invalid command\r\n");
+        }
+
+    }
 
     fprintf(stdout, "Fim do app");
+    return EXIT_SUCCESS;
 }
