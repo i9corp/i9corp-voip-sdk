@@ -123,6 +123,8 @@ int main(int argc, char *argv[]) {
             line.answer();
         } else if (!strcasecmp(buffer.c_str(), "reject")) {
             line.reject();
+        } else if (!strcasecmp(buffer.c_str(), "quit")) {
+            break;
         } else {
             fprintf(stdout, "invalid command\r\n");
         }

@@ -35,7 +35,8 @@ namespace i9corp {
     public:
 
     public:
-        bool volume( unsigned short value);
+        bool volume(unsigned short value);
+
         bool isMuted() const;
 
         bool isInHold() const;
@@ -46,8 +47,12 @@ namespace i9corp {
 
     private:
         void setNumber(const char *number);
+
         bool inHold;
         int line;
+        long longId;
+    public:
+        long getLongId() const;
     };
 }
 

@@ -134,6 +134,19 @@ namespace i9corp {
 
         // PJSIP
         Endpoint *endpoint;
+
+
+        bool dtmf(VoipCall *call, char digits);
+        bool dtmf(VoipCall *call, const char *digits);
+        bool transfer(VoipCall *call, const char *digits);
+        bool reject(VoipCall *call);
+        bool volume(VoipCall *call, unsigned short value);
+        bool hangup(VoipCall *call);
+        bool answer(VoipCall *call);
+        bool mute(VoipCall *call, bool value);
+        bool hold(VoipCall *call, bool value);
+
+
     };
 
 }

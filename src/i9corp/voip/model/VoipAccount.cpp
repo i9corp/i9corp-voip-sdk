@@ -25,8 +25,8 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     pj::CallInfo ci = call->getInfo();
     pj::CallOpParam prm;
 
-    long id = VoipTools::getLongId(call);
-    this->setCall(id, call);
+
+    this->setCall(call->getLongId(), call);
 
     std::stringstream ss;
     ss << "*** Incoming Call: " << ci.remoteUri << " [" << ci.stateText << "]";
@@ -40,7 +40,7 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     }
 
     call->answer(prm);
-    this->handler->onIncomingRinging(this->line, id, call->getNumber(), TVoipCallDirection::INCOMING);
+    this->handler->onIncomingRinging(this->line, call->getLongId(), call->getNumber(), TVoipCallDirection::INCOMING);
 }
 
 

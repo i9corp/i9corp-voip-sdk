@@ -16,6 +16,7 @@ VoipCall::VoipCall(int line, VoipHandlerController *controller, pj::Account &acc
     this->muted = false;
     this->line = line;
     this->number = nullptr;
+    this->longId = VoipTools::getLongId(this);
 }
 
 
@@ -37,7 +38,7 @@ bool VoipCall::hold(bool value) {
             prm.opt.flag = 1;
             this->reinvite(prm);
         }
-        this->handler->onInHold(this->line, this->getId(), value);
+        this->handler->onInHold(this->line, this->getLongId(), value);
         return true;
     } catch (pj::Error &e) {
         return false;
@@ -59,7 +60,7 @@ bool VoipCall::mute(bool value) {
             } else {
                 mgr.getCaptureDevMedia().startTransmit(*aud_med);
             }
-            this->handler->onInMute(this->line, this->getId(), value);
+            this->handler->onInMute(this->line, this->getLongId(), value);
             return true;
         } catch (pj::Error &e) {
             this->handler->onError(e.info(false).c_str());
@@ -97,28 +98,28 @@ void VoipCall::onCallState(pj::OnCallStateParam &prm) {
 
     switch (ci.state) {
         case PJSIP_INV_STATE_DISCONNECTED:
-            this->handler->onHangup(this->line, this->getId());
+            this->handler->onHangup(this->line, this->getLongId());
             break;
         case PJSIP_INV_STATE_CONNECTING:
         case PJSIP_INV_STATE_CALLING:
-            this->handler->onOutgoingRinging(this->line, this->getId(), this->getNumber(),
+            this->handler->onOutgoingRinging(this->line, this->getLongId(), this->getNumber(),
                                              TVoipCallDirection::OUTGOING);
             break;
         case PJSIP_INV_STATE_CONFIRMED:
-            this->handler->onAnswer(this->line, this->getId(), this->getNumber());
+            this->handler->onAnswer(this->line, this->getLongId(), this->getNumber());
             break;
         case PJSIP_INV_STATE_INCOMING:
             d = this->handler->getDirection(this->getNumber());
-            this->handler->onIncomingRinging(this->line, this->getId(), this->getNumber(), d);
+            this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
             break;
         case PJSIP_INV_STATE_EARLY:
             if (ci.lastStatusCode != PJSIP_SC_RINGING) {
-                this->handler->onRingStop(this->line, this->getId(), this->getNumber(), d);
+                this->handler->onRingStop(this->line, this->getLongId(), this->getNumber(), d);
             } else if (ci.role == PJSIP_ROLE_UAC) {
-                this->handler->onIncomingRinging(this->line, this->getId(), this->getNumber(), d);
+                this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
             } else if (ci.role == PJSIP_ROLE_UAS) {
                 d = this->handler->getDirection(this->getNumber());
-                this->handler->onIncomingRinging(this->line, this->getId(), this->getNumber(), d);
+                this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
             }
             break;
     }
@@ -146,5 +147,9 @@ void VoipCall::setNumber(const char *number) {
         free(this->number);
     }
     this->number = mValue;
+}
+
+long VoipCall::getLongId() const {
+    return longId;
 }
 

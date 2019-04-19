@@ -252,7 +252,7 @@ bool VoipLine::dial(const char *digits) {
     }
 
     auto call = new VoipCall(this->number, this->handler, *this->account);
-    this->account->setCall(call->getId(), call);
+    this->account->setCall(call->getLongId(), call);
 
     std::stringstream ss;
     ss << sipNumber;
@@ -263,14 +263,14 @@ bool VoipLine::dial(const char *digits) {
         prm.opt.audioCount = 1;
         prm.opt.videoCount = 0;
         call->makeCall(ss.str(), prm);
-        this->account->setCall(call->getId(), call);
+        this->account->setCall(call->getLongId(), call);
         // this->currentCall = call;
         TVoipCallDirection d = handler->getDirection(call->getNumber());
-        this->handler->onDial(this->number, call->getId(), call->getNumber(), d);
+        this->handler->onDial(this->number, call->getLongId(), call->getNumber(), d);
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
-        this->account->removeCall(call->getId());
+        this->account->removeCall(call->getLongId());
         return false;
     }
 }
@@ -307,29 +307,57 @@ void VoipLine::setStunServer(const char *value) {
     this->stunServer = mValue;
 }
 
+bool VoipLine::dtmf(long callId, char digits) {
+    std::stringstream ss;
+    ss << digits;
+    return this->dtmf(callId, ss.str().c_str());
+}
+
 bool VoipLine::dtmf(long callId, const char *digits) {
     if (this->account == nullptr) {
         return false;
     }
     auto call = this->account->getCall(callId);
+    return this->dtmf(call, digits);
+}
+
+
+bool VoipLine::dtmf(const char *digits) {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->dtmf(currentCall, digits);
+}
+
+bool VoipLine::dtmf(char digits) {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->dtmf(this->currentCall, digits);
+}
+
+bool VoipLine::dtmf(VoipCall *call, char digits) {
     if (call == nullptr) {
         return false;
     }
     std::stringstream ss;
     ss << digits;
+    return this->dtmf(call, ss.str().c_str());
+}
+
+bool VoipLine::dtmf(VoipCall *call, const char *digits) {
     try {
-        call->dialDtmf(ss.str());
+        if (digits == nullptr) {
+            return false;
+        }
+        call->dialDtmf(digits);
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
         return false;
     }
-}
-
-bool VoipLine::dtmf(long callId, char digits) {
-    std::stringstream ss;
-    ss << digits;
-    return this->dtmf(callId, ss.str().c_str());
 }
 
 VoipCall *VoipLine::getCurrentCall() {
@@ -351,7 +379,7 @@ bool VoipLine::transfer(const char *number) {
         handler->onError("Number or current call is null");
         return false;
     }
-    return this->transfer(this->currentCall->getId(), number);
+    return this->transfer(this->currentCall, number);
 }
 
 bool VoipLine::transfer(long callId, const char *digits) {
@@ -365,7 +393,13 @@ bool VoipLine::transfer(long callId, const char *digits) {
         handler->onError("Call not found");
         return false;
     }
+    return this->transfer(call, digits);
+}
 
+bool VoipLine::transfer(VoipCall *call, const char *digits) {
+    if (call == nullptr || digits == nullptr) {
+        return false;
+    }
     char *sipNumber = this->toSipNumber(digits);
     if (sipNumber == nullptr) {
         handler->onError("Failure on parser digits to sip");
@@ -380,7 +414,7 @@ bool VoipLine::transfer(long callId, const char *digits) {
         pj::CallOpParam prm;
         call->xfer(ss.str(), prm);
         TVoipCallDirection d = handler->getDirection(call->getNumber());
-        this->handler->onTransfer(this->number, call->getId(), call->getNumber(), d);
+        this->handler->onTransfer(this->number, call->getLongId(), call->getNumber(), d);
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
@@ -388,12 +422,24 @@ bool VoipLine::transfer(long callId, const char *digits) {
     }
 }
 
+bool VoipLine::reject() {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->reject(this->currentCall);
+}
+
 bool VoipLine::reject(long callId) {
-    VoipCall *call = this->getCurrentCall();
+    VoipCall *call = this->account->getCall(callId);
     if (call == nullptr) {
         handler->onError("Call not found");
         return false;
     }
+    return this->reject(call);
+}
+
+bool VoipLine::reject(VoipCall *call) {
     try {
         pj::CallOpParam prm;
         prm.statusCode = pjsip_status_code::PJSIP_SC_BUSY_HERE;
@@ -401,9 +447,10 @@ bool VoipLine::reject(long callId) {
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
     }
-    this->account->removeCall(callId);
+    this->account->removeCall(call->getLongId());
     return true;
 }
+
 
 bool VoipLine::hangup() {
     if (this->currentCall == nullptr) {
@@ -411,7 +458,7 @@ bool VoipLine::hangup() {
         return false;
     }
 
-    return this->hangup(this->currentCall->getId());
+    return this->hangup(this->currentCall);
 }
 
 bool VoipLine::hangup(long callId) {
@@ -420,16 +467,31 @@ bool VoipLine::hangup(long callId) {
         handler->onError("Call not found");
         return false;
     }
+    return this->hangup(call);
+}
+
+bool VoipLine::hangup(VoipCall *call) {
+    if (call == nullptr) {
+        return false;
+    }
     try {
         pj::CallOpParam prm;
         prm.statusCode = pjsip_status_code::PJSIP_SC_ACCEPTED;
         call->hangup(prm);
-        this->account->removeCall(callId);
+        this->account->removeCall(call->getLongId());
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
         return false;
     }
+}
+
+bool VoipLine::answer() {
+    if (this->currentCall == nullptr) {
+        handler->onError("Current call is null");
+        return false;
+    }
+    return this->answer(this->currentCall);
 }
 
 bool VoipLine::answer(long callId) {
@@ -438,7 +500,11 @@ bool VoipLine::answer(long callId) {
         handler->onError("Call not found");
         return false;
     }
+    return this->answer(call);
+}
 
+
+bool VoipLine::answer(VoipCall *call) {
     pj::CallInfo ci = call->getInfo();
     if (ci.lastStatusCode != PJSIP_SC_RINGING) {
         handler->onError("Call not is ringing");
@@ -456,20 +522,12 @@ bool VoipLine::answer(long callId) {
     }
 }
 
-bool VoipLine::answer() {
-    if (this->currentCall == nullptr) {
-        handler->onError("Current call is null");
-        return false;
-    }
-    return this->answer(this->currentCall->getId());
-}
-
 bool VoipLine::mute(bool value) {
     if (this->currentCall == nullptr) {
         handler->onError("Current call is null");
         return false;
     }
-    return this->mute(this->currentCall->getId(), value);
+    return this->mute(this->currentCall, value);
 }
 
 bool VoipLine::mute(long callId, bool value) {
@@ -478,15 +536,23 @@ bool VoipLine::mute(long callId, bool value) {
         handler->onError("Call not found");
         return false;
     }
+    return this->mute(call, value);
+}
+
+bool VoipLine::mute(VoipCall *call, bool value) {
+    if (call == nullptr) {
+        return false;
+    }
     return call->mute(value);
 }
+
 
 bool VoipLine::hold(bool value) {
     if (this->currentCall == nullptr) {
         handler->onError("Current call is null");
         return false;
     }
-    return this->hold(this->currentCall->getId(), value);
+    return this->hold(this->currentCall, value);
 }
 
 bool VoipLine::hold(long callId, bool value) {
@@ -495,8 +561,16 @@ bool VoipLine::hold(long callId, bool value) {
         handler->onError("Call not found");
         return false;
     }
+    return this->hold(call, value);
+}
+
+bool VoipLine::hold(VoipCall *call, bool value) {
+    if (call == nullptr) {
+        return false;
+    }
     return call->hold(value);
 }
+
 
 bool VoipLine::volume(long callId, unsigned short value) {
     VoipCall *call = this->account->getCall(callId);
@@ -504,12 +578,8 @@ bool VoipLine::volume(long callId, unsigned short value) {
         handler->onError("Call not found");
         return false;
     }
-    return call->volume(value);
 
-}
-
-void VoipLine::onChangeRegisterState(TVoipLineStatus status) {
-    this->setStatus(status);
+    return this->volume(call, value);
 }
 
 bool VoipLine::volume(unsigned short value) {
@@ -517,32 +587,22 @@ bool VoipLine::volume(unsigned short value) {
         handler->onError("Current call is null");
         return false;
     }
-    return this->volume(this->currentCall->getId(), value);
+    return this->volume(this->currentCall, value);
 }
 
-bool VoipLine::reject() {
-    if (this->currentCall == nullptr) {
-        handler->onError("Current call is null");
+
+bool VoipLine::volume(VoipCall *call, unsigned short value) {
+    if (call == nullptr) {
         return false;
     }
-    return this->reject(this->currentCall->getId());
+    return call->volume(value);
 }
 
-bool VoipLine::dtmf(const char *digits) {
-    if (this->currentCall == nullptr) {
-        handler->onError("Current call is null");
-        return false;
-    }
-    return this->dtmf(this->currentCall->getId(), digits);
+
+void VoipLine::onChangeRegisterState(TVoipLineStatus status) {
+    this->setStatus(status);
 }
 
-bool VoipLine::dtmf(char digits) {
-    if (this->currentCall == nullptr) {
-        handler->onError("Current call is null");
-        return false;
-    }
-    return this->dtmf(this->currentCall->getId(), digits);
-}
 
 void VoipLine::onCreateCall(VoipCall *call) {
     this->currentCall = call;
@@ -553,3 +613,5 @@ void VoipLine::onRemoveCall(VoipCall *call) {
         this->currentCall = nullptr;
     }
 }
+
+
