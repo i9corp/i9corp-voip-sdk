@@ -62,7 +62,6 @@ void VoipAccount::removeCall(long id) {
     if (this->state != nullptr) {
         this->state->onRemoveCall(it->second);
     }
-    delete it->second;
     this->calls.erase(it);
 }
 

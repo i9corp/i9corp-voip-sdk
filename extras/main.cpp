@@ -63,7 +63,7 @@ public:
     }
 
     void onHangup(int line, int callId) override {
-
+        fprintf(stdout, "hangup\r\n");
     }
 
     void onInMute(int line, int callId, bool value) override {
