@@ -22,6 +22,7 @@ VoipAccount::~VoipAccount() {
 void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
 
     VoipCall *call = new VoipCall(this->line, this->handler, *this, iprm.callId);
+    call->setDirection(this->handler->getDirection(call->getExten(), call->getNumber()));
     pj::CallInfo ci = call->getInfo();
     pj::CallOpParam prm;
 
@@ -40,7 +41,7 @@ void VoipAccount::onIncomingCall(pj::OnIncomingCallParam &iprm) {
     }
 
     call->answer(prm);
-    this->handler->onIncomingRinging(this->line, call->getLongId(), call->getNumber(), TVoipCallDirection::INCOMING);
+ //   this->handler->onIncomingRinging(this->line, call->getLongId(), call->getNumber(), call->getDirection());
 }
 
 

@@ -7,6 +7,7 @@
 
 #include <i9corp/voip/common/CommonExport.h>
 #include <i9corp/voip/controller/VoipHandlerController.h>
+#include <i9corp/voip/model/VoipType.h>
 #include <pjsua2.hpp>
 
 using namespace i9corp;
@@ -25,8 +26,15 @@ namespace i9corp {
 
     private:
 
+        void ringing(int line, long callId, const char *phoneNumber, TVoipCallDirection direction);
         VoipHandlerController *handler;
         char *number;
+        char *exten;
+    public:
+        const char *getExten();
+
+        void setExten(const char *exten);
+
     public:
 
     private:
@@ -48,9 +56,18 @@ namespace i9corp {
     private:
         void setNumber(const char *number);
 
+        TVoipCallDirection direction;
+    public:
+        TVoipCallDirection getDirection() const;
+        void setDirection(TVoipCallDirection direction);
+
+
+    private:
+
         bool inHold;
         int line;
         long longId;
+        bool hasDirection;
     public:
         long getLongId() const;
     };

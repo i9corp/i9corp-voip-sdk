@@ -14,7 +14,8 @@ namespace i9corp {
             OUTGOING,
             INCOMING,
             INTERNAL,
-            EXTERNAL
+            EXTERNAL,
+            UNDEFINED
         };
 
         enum Line {

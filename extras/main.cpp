@@ -33,7 +33,7 @@ public:
     }
 
     bool onTransfer(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
-        fprintf(stdout, "number: %s", phoneNumber);
+        fprintf(stdout, "number: %s\r\n", phoneNumber);
         return false;
     }
 
@@ -43,12 +43,11 @@ public:
     }
 
     void onIncomingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
-        fprintf(stdout, "number: %s", phoneNumber);
-
+        fprintf(stdout, "incoming ring: number: %s\r\n", phoneNumber);
     }
 
     void onOutgoingRinging(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
-        fprintf(stdout, "number: %s", phoneNumber);
+        fprintf(stdout, "outgoing ring: number: %s\r\n", phoneNumber);
     }
 
     void onAnswer(int line, long callId, const char *phoneNumber) override {
@@ -86,8 +85,15 @@ public:
 
     }
 
-    TVoipCallDirection getDirection(const char *number) override {
-        return TVoipCallDirection::EXTERNAL;
+    TVoipCallDirection getDirection(const char *source, const char *destination) override {
+        if (!strcasecmp(destination, "4080")) {
+            return TVoipCallDirection::OUTGOING;
+        }
+        if (strlen(source) > 4) {
+            return TVoipCallDirection::EXTERNAL;
+        } else {
+            return TVoipCallDirection::INTERNAL;
+        }
     }
 
     void onRingStop(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) override {
@@ -105,6 +111,11 @@ public:
 #include <pj/errno.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <cmath>
+
+#include <string.h>
+#include <iomanip>
 
 int main(int argc, char *argv[]) {
 
@@ -112,7 +123,7 @@ int main(int argc, char *argv[]) {
     d.status = TVoipLineStatus::UNREGISTERED;
 
     d.running = true;
-    VoipLine line(1, &d, "4080", "4080!", "10.224.110.223", 5060);
+    VoipLine line(1, &d, "4080", "4080!4080", "10.224.110.223", 5060);
     d.line = &line;
     line.active();
 
@@ -125,6 +136,11 @@ int main(int argc, char *argv[]) {
             line.reject();
         } else if (!strcasecmp(buffer.c_str(), "quit")) {
             break;
+        } else if (buffer.find("dial", 0) == 0) {
+            char number[32];
+            std::sscanf(buffer.c_str(), "dial %s",
+                        &number);
+            line.dial(number);
         } else {
             fprintf(stdout, "invalid command\r\n");
         }

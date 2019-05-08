@@ -37,7 +37,7 @@ public:
 
     virtual void onNotice(const char *message, ...)= 0;
 
-    virtual TVoipCallDirection getDirection(const char *number)= 0;
+    virtual TVoipCallDirection getDirection(const char *branch, const char *number)= 0;
 
 };
 }

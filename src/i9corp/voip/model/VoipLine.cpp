@@ -265,8 +265,8 @@ bool VoipLine::dial(const char *digits) {
         call->makeCall(ss.str(), prm);
         this->account->setCall(call->getLongId(), call);
         // this->currentCall = call;
-        TVoipCallDirection d = handler->getDirection(call->getNumber());
-        this->handler->onDial(this->number, call->getLongId(), call->getNumber(), d);
+        call->setDirection(TVoipCallDirection::OUTGOING);
+        this->handler->onDial(this->number, call->getLongId(), call->getNumber(), call->getDirection());
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());
@@ -413,8 +413,8 @@ bool VoipLine::transfer(VoipCall *call, const char *digits) {
     try {
         pj::CallOpParam prm;
         call->xfer(ss.str(), prm);
-        TVoipCallDirection d = handler->getDirection(call->getNumber());
-        this->handler->onTransfer(this->number, call->getLongId(), call->getNumber(), d);
+        call->setDirection(TVoipCallDirection::OUTGOING);
+        this->handler->onTransfer(this->number, call->getLongId(), call->getNumber(), call->getDirection());
         return true;
     } catch (pj::Error &e) {
         handler->onError(e.info(false).c_str());

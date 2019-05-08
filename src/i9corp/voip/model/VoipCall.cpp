@@ -17,16 +17,10 @@ VoipCall::VoipCall(int line, VoipHandlerController *controller, pj::Account &acc
     this->line = line;
     this->number = nullptr;
     this->longId = VoipTools::getLongId(this);
+    this->hasDirection = false;
+    this->direction = TVoipCallDirection::UNDEFINED;
 }
 
-
-const char *VoipCall::getNumber() {
-    if (this->number == nullptr) {
-        pj::CallInfo ci = getInfo();
-        this->setNumber(VoipTools::getPhoneNumberFromUri(ci.remoteUri.c_str()));
-    }
-    return number;
-}
 
 bool VoipCall::hold(bool value) {
     this->inHold = value;
@@ -92,9 +86,9 @@ bool VoipCall::isInHold() const {
 
 
 void VoipCall::onCallState(pj::OnCallStateParam &prm) {
-    TVoipCallDirection d;
     pj::CallInfo ci = getInfo();
     Call::onCallState(prm);
+    std::string source;
 
     switch (ci.state) {
         case PJSIP_INV_STATE_DISCONNECTED:
@@ -102,28 +96,36 @@ void VoipCall::onCallState(pj::OnCallStateParam &prm) {
             break;
         case PJSIP_INV_STATE_CONNECTING:
         case PJSIP_INV_STATE_CALLING:
-            this->handler->onOutgoingRinging(this->line, this->getLongId(), this->getNumber(),
-                                             TVoipCallDirection::OUTGOING);
+            this->ringing(this->line, this->getLongId(), this->getNumber(),
+                                             this->getDirection());
             break;
         case PJSIP_INV_STATE_CONFIRMED:
             this->handler->onAnswer(this->line, this->getLongId(), this->getNumber());
             break;
         case PJSIP_INV_STATE_INCOMING:
-            d = this->handler->getDirection(this->getNumber());
-            this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
+            this->ringing(this->line, this->getLongId(), this->getNumber(), this->getDirection());
             break;
         case PJSIP_INV_STATE_EARLY:
             if (ci.lastStatusCode != PJSIP_SC_RINGING) {
-                this->handler->onRingStop(this->line, this->getLongId(), this->getNumber(), d);
-            } else if (ci.role == PJSIP_ROLE_UAC) {
-                this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
-            } else if (ci.role == PJSIP_ROLE_UAS) {
-                d = this->handler->getDirection(this->getNumber());
-                this->handler->onIncomingRinging(this->line, this->getLongId(), this->getNumber(), d);
+                this->handler->onRingStop(this->line, this->getLongId(), this->getNumber(), this->getDirection());
+                return;
             }
+
+            switch (ci.role) {
+                case PJSIP_ROLE_UAC:
+                    this->setDirection(this->handler->getDirection(this->getExten(), this->getNumber()));
+                    this->ringing(this->line, this->getLongId(), this->getNumber(),
+                                                     this->getDirection());
+                    break;
+                case PJSIP_ROLE_UAS:
+                    this->setDirection(TVoipCallDirection::OUTGOING);
+                    this->ringing(this->line, this->getLongId(), this->getNumber(),
+                                                     this->getDirection());
+                    break;
+            }
+
             break;
     }
-
 }
 
 void VoipCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
@@ -140,6 +142,16 @@ void VoipCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
     }
 }
 
+const char *VoipCall::getNumber() {
+    if (this->number == nullptr) {
+        pj::CallInfo ci = getInfo();
+        char *mValue = VoipTools::getPhoneNumberFromUri(ci.remoteUri.c_str());
+        this->setNumber(mValue);
+        if (mValue != nullptr) free(mValue);
+    }
+    return number;
+}
+
 
 void VoipCall::setNumber(const char *number) {
     char *mValue = number == nullptr ? nullptr : strdup(number);
@@ -149,7 +161,54 @@ void VoipCall::setNumber(const char *number) {
     this->number = mValue;
 }
 
+
+const char *VoipCall::getExten() {
+    if (this->exten == nullptr) {
+        pj::CallInfo ci = getInfo();
+        char *mValue = VoipTools::getPhoneNumberFromUri(ci.localUri.c_str());
+        this->setExten(mValue);
+        if (mValue != nullptr) free(mValue);
+    }
+    return number;
+}
+
+void VoipCall::setExten(const char *exten) {
+    char *mValue = exten == nullptr ? nullptr : strdup(exten);
+    if (this->exten != nullptr) {
+        free(this->exten);
+    }
+    this->exten = mValue;
+}
+
+
 long VoipCall::getLongId() const {
     return longId;
 }
 
+void VoipCall::setDirection(TVoipCallDirection direction) {
+    if (this->hasDirection) {
+        return;
+    }
+    VoipCall::direction = direction;
+    this->hasDirection = true;
+}
+
+TVoipCallDirection VoipCall::getDirection() const {
+    return direction;
+}
+
+void VoipCall::ringing(int line, long callId, const char *phoneNumber, TVoipCallDirection direction) {
+    switch (direction) {
+        case TVoipCallDirection::OUTGOING:
+            this->handler->onOutgoingRinging(line, callId, phoneNumber, direction);
+            break;
+        case TVoipCallDirection::INCOMING:
+        case TVoipCallDirection::EXTERNAL:
+        case TVoipCallDirection::INTERNAL:
+            this->handler->onIncomingRinging(line, callId, phoneNumber, direction);
+            break;
+        default:
+            return;
+    }
+
+}
