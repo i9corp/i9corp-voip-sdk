@@ -13,8 +13,12 @@
 #include <pjsua2.hpp>
 #include <sys/time.h>
 #include <sys/types.h>
+
+#ifdef _WIN32
+
 #include <winsock2.h>
 
+#endif
 using namespace i9corp;
 
 VoipLine::VoipLine(int number, VoipHandlerController *controller) {
