@@ -1,0 +1,25 @@
+_realname=i9corp-voip-devel
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Biblioteca para comunicacao com o mamute-core (${MINGW_PACKAGE_PREFIX})"
+noextract=()
+depends=(
+        "${MINGW_PACKAGE_PREFIX}-winpthreads"
+        )
+arch=('any')
+license=('proprietary')
+source=("i9corp-voip.tar.gz")
+groups=("${MINGW_PACKAGE_PREFIX}-i9corp-sdk")
+package() {
+		CURRENT_DIR=`pwd`;
+		OUTPUT_DIR="${CURRENT_DIR}/$pkgname-$pkgver/usr";
+		DIST_DIR="${CURRENT_DIR}/usr";
+		echo "CURRENT_DIR: ${CURRENT_DIR}"
+		echo "OUTPUT_DIR: ${OUTPUT_DIR}"
+		echo "DIST_DIR: ${DIST_DIR}"
+
+        mkdir -p ${OUTPUT_DIR}
+        cp -fr ${DIST_DIR}/* ${OUTPUT_DIR}/
+}
+
