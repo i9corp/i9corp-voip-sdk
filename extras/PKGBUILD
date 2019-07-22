@@ -8,7 +8,7 @@ depends=(
         "${MINGW_PACKAGE_PREFIX}-winpthreads"
         )
 arch=('any')
-license=('proprietary')
+license=('LGPLv3')
 source=("i9corp-voip.tar.gz")
 groups=("${MINGW_PACKAGE_PREFIX}-i9corp-sdk")
 package() {
