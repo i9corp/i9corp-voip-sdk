@@ -12,14 +12,8 @@ license=('LGPLv3')
 source=("i9corp-voip.tar.gz")
 groups=("${MINGW_PACKAGE_PREFIX}-i9corp-sdk")
 package() {
-		CURRENT_DIR=`pwd`;
-		OUTPUT_DIR="${CURRENT_DIR}/$pkgname-$pkgver/usr";
-		DIST_DIR="${CURRENT_DIR}/usr";
-		echo "CURRENT_DIR: ${CURRENT_DIR}"
-		echo "OUTPUT_DIR: ${OUTPUT_DIR}"
-		echo "DIST_DIR: ${DIST_DIR}"
-
-        mkdir -p ${OUTPUT_DIR}
-        cp -fr ${DIST_DIR}/* ${OUTPUT_DIR}/
+    CURRENT_DIR=`pwd`;
+    DIST_DIR="${CURRENT_DIR}/usr";
+    cp -fr ${DIST_DIR} "$pkgdir/"
 }
 
