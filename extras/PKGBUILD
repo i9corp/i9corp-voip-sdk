@@ -13,7 +13,7 @@ source=("i9corp-voip.tar.gz")
 groups=("${MINGW_PACKAGE_PREFIX}-i9corp-sdk")
 package() {
     CURRENT_DIR=`pwd`;
-    DIST_DIR="${CURRENT_DIR}/usr";
+    DIST_DIR="${CURRENT_DIR}/${MSYSTEM,,}";
     cp -fr ${DIST_DIR} "$pkgdir/"
 }
 

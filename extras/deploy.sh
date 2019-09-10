@@ -31,7 +31,7 @@ function build(){
 
 function dist() {
     cd "${SOURCE_DIR}/dist"
-    ${COMMAND_TAR} -czvf ${STAGE_DIR}/i9corp-voip.tar.gz . --transform='s/\./usr/'
+    ${COMMAND_TAR} -czvf ${STAGE_DIR}/i9corp-voip.tar.gz . --transform="s/\./${MSYSTEM,,}/"
     ${COMMAND_COPY} -fr ${STAGE_DIR}/i9corp-voip.tar.gz ${SCRIPT_PATH}
 
     cd "${SCRIPT_PATH}"
