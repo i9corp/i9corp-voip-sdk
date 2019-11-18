@@ -21,6 +21,15 @@
 #endif
 using namespace i9corp;
 
+
+void VoipLine::setStatus(TVoipLineStatus value) {
+    this->status = value;
+    if (this->handler == nullptr) {
+        return;
+    }
+    this->handler->onChangeRegisterState(this->number, this->status);
+}
+
 VoipLine::VoipLine(int number, VoipHandlerController *controller) {
     if (controller == nullptr) {
         throw "Controller is null";
@@ -31,15 +40,6 @@ VoipLine::VoipLine(int number, VoipHandlerController *controller) {
     this->initialize();
     this->port = 5060;
 }
-
-void VoipLine::setStatus(TVoipLineStatus value) {
-    this->status = value;
-    if (this->handler == nullptr) {
-        return;
-    }
-    this->handler->onChangeRegisterState(this->number, this->status);
-}
-
 VoipLine::VoipLine(int number, VoipHandlerController *controller, const char *username, const char *password,
                    const char *hostname, unsigned short port) {
     if (controller == nullptr) {
@@ -175,6 +175,7 @@ void VoipLine::initialize() {
     this->registered = false;
     this->account = nullptr;
     this->id = 0;
+    this->setStunServer("i9corp.com.br");
     this->setStatus(TVoipLineStatus::UNREGISTERED);
     Endpoint *ep = new Endpoint();
     try {
