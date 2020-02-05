@@ -54,7 +54,7 @@ Priority: extra
 Section: net
 Maintainer: I9CORP <repo@i9corp.com.br>
 Version: @VERSION@
-Depends: libpjproject-dev
+Depends:
 Description: I9Corp Biblioteca para Voip
 EOF
 
