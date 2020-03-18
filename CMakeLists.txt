@@ -17,17 +17,17 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(PJSIP REQUIRED libpjproject)
 
 set(INCLUDE_DIR ${INCLUDE_DIR} ./include)
-set(LIBRARY_DIR ${LIBRARY_DIR} ./lib )
+set(LIBRARY_DIR ${LIBRARY_DIR} ./lib)
 
 SET(REQUIRED_LIBRARIES ${PJSIP_LIBRARIES})
 
-foreach(REQUIRED_LIBRARY ${REQUIRED_LIBRARIES})
+foreach (REQUIRED_LIBRARY ${REQUIRED_LIBRARIES})
     find_library(REQUIRED_LIBRARY_PATH NAMES ${REQUIRED_LIBRARY})
-    if(NOT REQUIRED_LIBRARY_PATH)
+    if (NOT REQUIRED_LIBRARY_PATH)
         message(FATAL_ERROR "lib ${REQUIRED_LIBRARY} not found")
-    endif()
-    message ("library ${REQUIRED_LIBRARY} is found")
-endforeach(REQUIRED_LIBRARY)
+    endif ()
+    message("library ${REQUIRED_LIBRARY} is found")
+endforeach (REQUIRED_LIBRARY)
 
 include_directories(${INCLUDE_DIR})
 link_directories(${LIBRARY_DIR})
@@ -42,28 +42,40 @@ message("LIBRARY_DIR:               ${LIBRARY_DIR}")
 message("REQUIRED_LIBRARY:          ${REQUIRED_LIBRARIES}")
 
 add_library(i9corp-voip-sdk SHARED
-            include/i9corp/voip/common/CommonExport.h
-            src/i9corp/voip/common/CommonBuildLibrary.h
-            include/i9corp/voip/controller/VoipRegisterStateController.h
-            include/i9corp/voip/controller/VoipHandlerController.h
-            include/i9corp/voip/model/VoipLine.h
-            include/i9corp/voip/model/VoipCall.h
-            include/i9corp/voip/tools/VoipTools.h
-            include/i9corp/voip/model/VoipAccount.h
+        include/i9corp/voip/common/CommonExport.h
+        src/i9corp/voip/common/CommonBuildLibrary.h
+        include/i9corp/voip/controller/VoipRegisterStateController.h
+        include/i9corp/voip/controller/VoipHandlerController.h
+        include/i9corp/voip/model/VoipLine.h
+        include/i9corp/voip/model/VoipCall.h
+        include/i9corp/voip/tools/VoipTools.h
+        include/i9corp/voip/model/VoipAccount.h
 
         src/i9corp/voip/controller/VoipHandlerController.cpp
-            src/i9corp/voip/model/VoipLine.cpp
-            src/i9corp/voip/model/VoipCall.cpp
-            src/i9corp/voip/tools/VoipTools.cpp
-            src/i9corp/voip/model/VoipAccount.cpp
+        src/i9corp/voip/model/VoipLine.cpp
+        src/i9corp/voip/model/VoipCall.cpp
+        src/i9corp/voip/tools/VoipTools.cpp
+        src/i9corp/voip/model/VoipAccount.cpp
+        include/i9corp/voip/model/IOutputDeviceAudio.h
+        include/i9corp/voip/model/IInputDeviceAudio.h
+        src/i9corp/voip/model/VoipDeviceAudio.cpp
+        include/i9corp/voip/model/VoipDeviceAudio.h
+        src/i9corp/voip/model/VoipInputAudioDevice.cpp
+        include/i9corp/voip/model/VoipInputAudioDevice.h
+        src/i9corp/voip/model/VoipOutputAudioDevice.cpp
+        include/i9corp/voip/model/VoipOutputAudioDevice.h
         )
-target_link_libraries(i9corp-voip-sdk  ${REQUIRED_LIBRARIES})
+target_link_libraries(i9corp-voip-sdk ${REQUIRED_LIBRARIES})
 target_include_directories(i9corp-voip-sdk PUBLIC ${PJSIP_INCLUDE_DIRS})
 target_compile_options(i9corp-voip-sdk PUBLIC ${PJSIP_CFLAGS_OTHER})
 
 
-add_executable(voip-demo extras/main.cpp)
+add_executable(voip-demo bin/main.cpp)
 target_link_libraries(voip-demo i9corp-voip-sdk)
+
+add_executable(voip-device bin/device.cpp)
+target_link_libraries(voip-device i9corp-voip-sdk)
+
 
 set(I9CORP_BINDIR bin)
 set(I9CORP_BINCOMPONENT runtime)
@@ -72,7 +84,7 @@ set(I9CORP_LIBCOMPONENT dev)
 set(I9CORP_INCLUDEDIR)
 set(I9CORP_INCLUDECOMPONENT dev)
 
-message("Install dir: ${CMAKE_INSTALL_PREFIX}" )
+message("Install dir: ${CMAKE_INSTALL_PREFIX}")
 install(DIRECTORY include/i9corp/voip/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/i9corp/voip")
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${I9CORP_BINDIR} COMPONENT ${I9CORP_BINCOMPONENT}
@@ -80,7 +92,7 @@ install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${I9CORP_LIBDIR} COMPONENT ${I9CORP_LIBCOMPONENT}
         PUBLIC_HEADER DESTINATION ${I9CORP_INCLUDEDIR} COMPONENT ${I9CORP_INCLUDECOMPONENT})
 
-if(NOT TARGET uninstall)
+if (NOT TARGET uninstall)
     configure_file(
             "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
             "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
@@ -89,4 +101,4 @@ if(NOT TARGET uninstall)
     add_custom_target(uninstall
             COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
     # xargs rm < install_manifest.txt
-endif()
+endif ()
