@@ -125,6 +125,8 @@ void VoipCall::onCallState(pj::OnCallStateParam &prm) {
             }
 
             break;
+        default:
+            return;
     }
 }
 
