@@ -17,7 +17,10 @@ namespace i9corp {
 
         virtual bool isDefault() = 0;
 
+        virtual ~IInputDeviceAudio();
     };
+
+    IInputDeviceAudio::~IInputDeviceAudio() = default;
 }
 
 

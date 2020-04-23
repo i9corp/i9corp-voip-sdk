@@ -16,7 +16,11 @@ namespace i9corp {
         virtual bool isDefault() = 0;
 
         virtual void play(const char *audioFile) = 0;
+
+        virtual ~IOutputDeviceAudio();
     };
+
+    IOutputDeviceAudio::~IOutputDeviceAudio() = default;
 }
 
 
