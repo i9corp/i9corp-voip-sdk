@@ -13,6 +13,10 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment version")
+endif ()
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(PJSIP REQUIRED libpjproject)
 
