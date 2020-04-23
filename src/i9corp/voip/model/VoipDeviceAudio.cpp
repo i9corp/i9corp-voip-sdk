@@ -72,6 +72,7 @@ void VoipDeviceAudio::clear() {
 }
 
 bool VoipDeviceAudio::discovery() {
+#ifndef __APPLE__
     std::unique_lock<std::mutex> lck(*this->lock);
     this->clear(false);
     pj::Endpoint ep;
@@ -100,6 +101,7 @@ bool VoipDeviceAudio::discovery() {
     ep.libDestroy();
     // if (!this->discoveryInput()) return false;
     //if (!this->discoveryOutput()) return false;
+#endif
     return true;
 }
 
